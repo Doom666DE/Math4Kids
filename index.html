@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math4Kids</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="App Navigation">
+        <a class="brand" href="#" aria-label="Math4Kids Start">
+          <span class="brand-mark" aria-hidden="true">4</span>
+          <span>
+            <strong>Math4Kids</strong>
+            <small>Rechnen üben</small>
+          </span>
+        </a>
+
+        <nav class="side-nav" aria-label="Bereiche">
+          <button class="side-link active" type="button">
+            <span aria-hidden="true">+</span>
+            Aufgaben
+          </button>
+          <button class="side-link" type="button">
+            <span aria-hidden="true">%</span>
+            Training
+          </button>
+          <button class="side-link" type="button">
+            <span aria-hidden="true">*</span>
+            Belohnungen
+          </button>
+        </nav>
+
+        <section class="mini-card" aria-label="Tagesziel">
+          <p>Tagesziel</p>
+          <strong><span id="dailyGoal">0</span>/10</strong>
+          <div class="mini-progress">
+            <span id="dailyGoalBar"></span>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="section-label">Mathetraining</p>
+            <h1>Los geht's mit Kopfrechnen.</h1>
+          </div>
+          <div class="topbar-actions" aria-label="Einstellungen">
+            <label>
+              Level
+              <select id="levelSelect">
+                <option value="easy">Leicht</option>
+                <option value="medium">Mittel</option>
+                <option value="hard">Knifflig</option>
+              </select>
+            </label>
+            <label>
+              Rechenart
+              <select id="operationSelect">
+                <option value="mixed">Mix</option>
+                <option value="add">Plus</option>
+                <option value="subtract">Minus</option>
+                <option value="multiply">Mal</option>
+                <option value="divide">Geteilt</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section class="content-grid">
+          <section class="practice-panel" aria-labelledby="exerciseTitle">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Aktuelle Aufgabe</p>
+                <h2 id="exerciseTitle">Was ist das Ergebnis?</h2>
+              </div>
+            <div class="streak-pill" aria-label="Serie">
+              <span aria-hidden="true">^</span>
+              <strong id="streakCount">0</strong>
+              Serie
+            </div>
+          </div>
+
+            <div class="question-progress" aria-label="Fortschritt">
+              <strong id="questionCounter">Aufgabe 1 von 10</strong>
+              <div class="progress-dots" id="progressDots"></div>
+            </div>
+
+            <div class="equation-card">
+              <p id="questionMeta">Plusaufgabe</p>
+              <div class="equation" id="equation">8 + 4 = ?</div>
+              <form class="answer-form" id="answerForm">
+                <label class="answer-label" for="answerInput">Deine Antwort</label>
+                <div class="answer-row">
+                  <input
+                    id="answerInput"
+                    type="number"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="?"
+                    aria-describedby="feedbackText"
+                  />
+                  <button class="primary-button" type="submit">Prüfen</button>
+                </div>
+              </form>
+              <p class="feedback neutral" id="feedbackText" role="status">
+                Gib deine Antwort ein und drücke Prüfen.
+              </p>
+            </div>
+
+            <div class="actions-row">
+              <button class="secondary-button" id="hintButton" type="button">
+                Tipp zeigen
+              </button>
+              <button class="secondary-button" id="nextButton" type="button">
+                Nächste Aufgabe
+              </button>
+            </div>
+
+            <div class="hint-box" id="hintBox" hidden></div>
+          </section>
+
+          <aside class="summary-panel" aria-label="Fortschritt">
+            <section class="score-card">
+              <p class="section-label">Punkte</p>
+              <strong id="scoreCount">0</strong>
+              <span id="accuracyText">Noch keine Antworten</span>
+            </section>
+
+            <section class="reward-card">
+              <div class="reward-orbit" aria-hidden="true">
+                <span></span>
+                <strong id="rewardIcon">1</strong>
+              </div>
+              <h2 id="rewardTitle">Sternensammler</h2>
+              <p id="rewardText">Löse Aufgaben, um neue Abzeichen freizuschalten.</p>
+            </section>
+
+            <section class="history-card">
+              <div class="panel-head compact">
+                <h2>Letzte Runden</h2>
+                <button id="resetButton" type="button">Neu starten</button>
+              </div>
+              <ol class="history-list" id="historyList">
+                <li>Noch keine Runde gespielt.</li>
+              </ol>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
