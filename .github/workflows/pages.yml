@@ -36,14 +36,10 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
       - name: Build app
         run: npm run build
         env:
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          BASE_PATH: /Math4Kids/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
 
