@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math4Kids</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f6fbff;
+        --surface: #fff;
+        --ink: #162033;
+        --muted: #65748a;
+        --line: #dbe7ef;
+        --teal: #18a999;
+        --teal-dark: #087a70;
+        --yellow: #ffd166;
+        --coral: #ff7568;
+        --green: #68bd7d;
+        --blue: #4d96ff;
+        --shadow: 0 24px 60px rgba(39, 70, 105, 0.14);
+        font-family: "Nunito", "Segoe UI", sans-serif;
+        color: var(--ink);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 10% 12%, rgba(255, 209, 102, 0.24), transparent 24rem),
+          radial-gradient(circle at 85% 8%, rgba(24, 169, 153, 0.2), transparent 22rem),
+          linear-gradient(135deg, #f9fcff 0%, #edf8f5 100%);
+      }
+      button, input, select { font: inherit; }
+      button { cursor: pointer; }
+      .shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+      .sidebar {
+        display: flex; flex-direction: column; gap: 24px; padding: 28px 20px;
+        border-right: 1px solid var(--line); background: rgba(255,255,255,.82);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; }
+      .mark {
+        display: grid; width: 48px; height: 48px; place-items: center; border-radius: 8px;
+        background: linear-gradient(135deg, var(--teal), var(--blue)); color: #fff;
+        font-size: 1.7rem; font-weight: 900; box-shadow: 0 12px 24px rgba(24,169,153,.26);
+      }
+      .brand strong { display: block; font-size: 1.1rem; }
+      .brand small, .muted { color: var(--muted); font-weight: 800; }
+      .nav { display: grid; gap: 10px; }
+      .nav button {
+        min-height: 48px; border: 0; border-radius: 8px; background: transparent;
+        color: var(--muted); font-weight: 900; text-align: left; padding: 0 14px;
+      }
+      .nav button.active, .nav button:hover { background: #e8f7f4; color: var(--teal-dark); }
+      main { display: flex; flex-direction: column; gap: 24px; padding: 30px clamp(18px,4vw,54px); }
+      .top { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+      .label { margin: 0 0 6px; color: var(--teal-dark); font-size: .78rem; font-weight: 900; text-transform: uppercase; }
+      h1 { margin: 0 0 8px; font-size: clamp(1.9rem, 3vw, 2.7rem); line-height: 1.05; }
+      h2 { margin: 0; font-size: 1.28rem; }
+      .grid { display: grid; grid-template-columns: 290px minmax(0, 1fr) 330px; gap: 22px; align-items: start; }
+      .panel, .practice {
+        border: 1px solid rgba(219,231,239,.92); border-radius: 8px; background: rgba(255,255,255,.9);
+        box-shadow: var(--shadow); padding: 22px;
+      }
+      .modules { display: grid; gap: 10px; margin-top: 18px; }
+      .module {
+        display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: center; width: 100%;
+        padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.84);
+        color: var(--ink); text-align: left;
+      }
+      .module.active, .module:hover { border-color: var(--teal); background: #eefaf8; }
+      .module span:last-child { grid-column: 2; color: var(--muted); font-size: .84rem; font-weight: 800; }
+      .exercise {
+        display: grid; gap: 18px; margin-top: 18px; padding: clamp(18px,3vw,32px);
+        border: 1px solid #d1ebe7; border-radius: 8px;
+        background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(239,249,247,.92));
+      }
+      .visual {
+        display: grid; width: 96px; height: 72px; place-items: center; border-radius: 8px;
+        background: #fff8df; color: var(--teal-dark); font-size: 3rem; font-weight: 900;
+      }
+      .prompt { margin: 0; font-size: clamp(1.4rem,3vw,2.3rem); font-weight: 900; line-height: 1.15; }
+      .answer { display: flex; gap: 12px; align-items: end; }
+      label { display: grid; flex: 1; gap: 7px; color: var(--muted); font-weight: 900; }
+      input, select {
+        width: 100%; min-height: 46px; padding: 0 13px; border: 1px solid var(--line);
+        border-radius: 8px; background: #fff; color: var(--ink); font-weight: 900;
+      }
+      .primary, .secondary {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        min-height: 44px; border: 0; border-radius: 8px; font-weight: 900; padding: 0 18px;
+      }
+      .primary { background: var(--teal); color: #fff; box-shadow: 0 12px 26px rgba(24,169,153,.25); }
+      .secondary { background: #edf5fb; color: #31506b; }
+      .feedback { display: none; gap: 4px; padding: 14px; border-radius: 8px; font-weight: 900; }
+      .feedback.show { display: grid; }
+      .feedback.correct { background: #e9f8ee; color: #217245; }
+      .feedback.wrong { background: #fff0ee; color: #a33d32; }
+      .aside { display: grid; gap: 18px; }
+      .big { display: block; font-size: 3.2rem; line-height: 1; }
+      .list { display: grid; gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }
+      .list li { padding: 10px; border-radius: 8px; background: #f4f8fb; color: #31506b; font-weight: 900; }
+      .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+      .chip { padding: 10px 14px; border-radius: 999px; background: #fff; color: var(--teal-dark); font-weight: 900; box-shadow: 0 10px 26px rgba(39,70,105,.1); }
+      @media (max-width: 1180px) { .grid { grid-template-columns: 1fr; } .modules { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+      @media (max-width: 820px) { .shell { grid-template-columns: 1fr; } .sidebar { flex-direction: row; overflow-x: auto; } .nav { display: flex; } .answer, .top { flex-direction: column; } }
+      @media (max-width: 620px) { main { padding: 18px 14px 28px; } .modules { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="mark">4</span>
+          <span><strong>Math4Kids</strong><small>Schulisches Mathetraining</small></span>
+        </div>
+        <nav class="nav">
+          <button class="active">📘 Lernen</button>
+          <button>📝 Tests</button>
+          <button>👥 Kinder</button>
+          <button>📊 Dashboard</button>
+        </nav>
+      </aside>
+      <main>
+        <header class="top">
+          <div>
+            <p class="label">Lernplattform</p>
+            <h1>Math4Kids ist online.</h1>
+            <span class="muted">Demo-Version für GitHub Pages · Speichert Fortschritt lokal im Browser</span>
+          </div>
+          <div class="chips">
+            <span class="chip">Geometrie</span><span class="chip">Brüche</span><span class="chip">Prozent</span><span class="chip">Tests</span>
+          </div>
+        </header>
+        <section class="grid">
+          <section class="panel">
+            <p class="label">Themen</p>
+            <h2>Module für Grundschule + Sek I</h2>
+            <div class="modules" id="modules"></div>
+          </section>
+          <section class="practice">
+            <p class="label" id="moduleLabel">Geometrie</p>
+            <h2 id="title">Geometrie: Umfang</h2>
+            <div class="exercise">
+              <div class="visual" id="visual">▭</div>
+              <p class="prompt" id="prompt"></p>
+              <form class="answer" id="form">
+                <label>Deine Antwort <input id="answer" placeholder="Antwort" autocomplete="off" /></label>
+                <button class="primary" type="submit">Prüfen</button>
+              </form>
+              <div class="feedback" id="feedback"></div>
+              <button class="secondary" id="next" type="button">Nächste Aufgabe</button>
+            </div>
+          </section>
+          <aside class="aside">
+            <section class="panel">
+              <p class="label">Fortschritt</p>
+              <strong class="big" id="accuracy">0%</strong>
+              <span class="muted" id="count">0 Antworten gespeichert</span>
+            </section>
+            <section class="panel">
+              <p class="label">Empfehlungen</p>
+              <ul class="list" id="recommendations"></ul>
+            </section>
+            <section class="panel">
+              <p class="label">Letzte Versuche</p>
+              <ul class="list" id="history"></ul>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+    <script>
+      const modules = [
+        ["arithmetic", "🧠", "Grundrechenarten", "Plus, Minus, Mal, Geteilt"],
+        ["fractions", "◔", "Brüche", "Bruchteile und Vergleichen"],
+        ["decimals", "0,5", "Dezimalzahlen", "Kommazahlen und Runden"],
+        ["percent", "%", "Prozent", "Prozentwert und Rabatte"],
+        ["geometry", "▭", "Geometrie", "Formen, Umfang, Fläche"],
+        ["measures", "📏", "Maße", "Zeit, Geld, Länge"],
+        ["word", "📖", "Textaufgaben", "Rechenwege erkennen"],
+        ["equations", "x", "Gleichungen", "Platzhalter lösen"],
+        ["coordinates", "⊞", "Koordinaten", "Punkte und Abstände"],
+        ["statistics", "▥", "Statistik", "Tabellen und Mittelwert"],
+      ];
+      let active = "geometry";
+      let question = null;
+      let attempts = JSON.parse(localStorage.getItem("math4kids-docs-attempts") || "[]");
+      const $ = (id) => document.getElementById(id);
+      const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const save = () => localStorage.setItem("math4kids-docs-attempts", JSON.stringify(attempts));
+      function makeQuestion(moduleId) {
+        if (moduleId === "geometry") {
+          const l = rand(5, 16), w = rand(3, 12);
+          return { moduleId, title: "Geometrie: Fläche", prompt: `Ein Rechteck ist ${l} cm lang und ${w} cm breit. Berechne die Fläche.`, answer: String(l * w), hint: "Fläche = Länge · Breite.", visual: "▭" };
+        }
+        if (moduleId === "fractions") {
+          const d = [2,3,4,5,8][rand(0,4)], whole = d * rand(2, 10), n = rand(1, d - 1);
+          return { moduleId, title: "Bruchteile", prompt: `Wie viel ist ${n}/${d} von ${whole}?`, answer: String((whole / d) * n), hint: `Teile ${whole} durch ${d} und nimm ${n} Teile.`, visual: "◔" };
+        }
+        if (moduleId === "percent") {
+          const base = [40,50,60,80,100,120][rand(0,5)], p = [10,20,25,50][rand(0,3)];
+          return { moduleId, title: "Prozentwert", prompt: `Wie viel sind ${p}% von ${base}?`, answer: String((base * p) / 100), hint: "Prozent heißt von hundert.", visual: "%" };
+        }
+        if (moduleId === "equations") {
+          const x = rand(3, 25), add = rand(2, 15);
+          return { moduleId, title: "Gleichungen", prompt: `x + ${add} = ${x + add}. Wie groß ist x?`, answer: String(x), hint: `Ziehe ${add} auf beiden Seiten ab.`, visual: "x" };
+        }
+        if (moduleId === "statistics") {
+          const nums = [rand(2,12), rand(2,12), rand(2,12), rand(2,12)];
+          const avg = nums.reduce((a,b) => a + b, 0) / nums.length;
+          return { moduleId, title: "Statistik", prompt: `Berechne den Mittelwert von ${nums.join(", ")}.`, answer: String(avg).replace(".", ","), hint: "Addiere alle Werte und teile durch die Anzahl.", visual: "▥" };
+        }
+        const a = rand(4, 99), b = rand(2, 40);
+        return { moduleId, title: "Rechnen", prompt: `${a} + ${b} = ?`, answer: String(a + b), hint: "Zehner und Einer getrennt addieren.", visual: "✦" };
+      }
+      function normalize(value) { return String(value).trim().toLowerCase().replace(",", ".").replace(/\s+/g, "").replace(/cm²/g, "cm2"); }
+      function renderModules() {
+        $("modules").innerHTML = modules.map(([id, icon, title, desc]) => `
+          <button class="module ${id === active ? "active" : ""}" data-module="${id}">
+            <span>${icon}</span><strong>${title}</strong><span>${desc}</span>
+          </button>
+        `).join("");
+        document.querySelectorAll(".module").forEach((button) => button.addEventListener("click", () => {
+          active = button.dataset.module;
+          nextQuestion();
+        }));
+      }
+      function nextQuestion() {
+        question = makeQuestion(active);
+        $("moduleLabel").textContent = modules.find(([id]) => id === active)[2];
+        $("title").textContent = question.title;
+        $("prompt").textContent = question.prompt;
+        $("visual").textContent = question.visual;
+        $("answer").value = "";
+        $("feedback").className = "feedback";
+        renderModules();
+      }
+      function renderStats() {
+        const total = attempts.length;
+        const correct = attempts.filter((a) => a.correct).length;
+        $("accuracy").textContent = total ? `${Math.round((correct / total) * 100)}%` : "0%";
+        $("count").textContent = `${total} Antworten gespeichert`;
+        $("recommendations").innerHTML = ["Geometrie regelmäßig üben", "Brüche wiederholen", "Diagnosetest starten"].map((x) => `<li>${x}</li>`).join("");
+        $("history").innerHTML = attempts.slice(0, 5).map((a) => `<li>${a.module}: ${a.correct ? "richtig" : "üben"}</li>`).join("") || "<li>Noch keine Antworten.</li>";
+      }
+      $("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const correct = normalize($("answer").value) === normalize(question.answer);
+        attempts.unshift({ module: modules.find(([id]) => id === active)[2], correct });
+        save();
+        $("feedback").className = `feedback show ${correct ? "correct" : "wrong"}`;
+        $("feedback").innerHTML = `<strong>${correct ? "Richtig." : "Noch nicht."}</strong><span>${correct ? "Gut gerechnet." : `Lösung: ${question.answer}. ${question.hint}`}</span>`;
+        renderStats();
+      });
+      $("next").addEventListener("click", nextQuestion);
+      renderModules();
+      nextQuestion();
+      renderStats();
+    </script>
+  </body>
+</html>
