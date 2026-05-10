@@ -1,8 +1,9 @@
 let clientPromise;
+const viteEnv = import.meta.env ?? {};
 
 export const supabaseConfig = {
-  url: import.meta.env.VITE_SUPABASE_URL,
-  anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  url: viteEnv.VITE_SUPABASE_URL,
+  anonKey: viteEnv.VITE_SUPABASE_ANON_KEY,
 };
 
 export function hasSupabaseConfig() {

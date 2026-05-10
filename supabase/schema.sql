@@ -76,6 +76,24 @@ create table if not exists public.mission_progress (
   unique (child_id, mission_id)
 );
 
+create table if not exists public.class_rooms (
+  id uuid primary key default gen_random_uuid(),
+  teacher_id uuid not null default auth.uid() references public.profiles(id) on delete cascade,
+  name text not null,
+  grade int not null check (grade between 1 and 10),
+  school_year text not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.class_memberships (
+  id uuid primary key default gen_random_uuid(),
+  class_id uuid not null references public.class_rooms(id) on delete cascade,
+  child_id uuid not null references public.child_profiles(id) on delete cascade,
+  status text not null default 'active' check (status in ('active', 'archived')),
+  created_at timestamptz not null default now(),
+  unique (class_id, child_id)
+);
+
 create table if not exists public.test_sessions (
   id uuid primary key default gen_random_uuid(),
   child_id uuid not null references public.child_profiles(id) on delete cascade,
@@ -101,6 +119,8 @@ alter table public.skills enable row level security;
 alter table public.missions enable row level security;
 alter table public.attempts enable row level security;
 alter table public.mission_progress enable row level security;
+alter table public.class_rooms enable row level security;
+alter table public.class_memberships enable row level security;
 alter table public.test_sessions enable row level security;
 alter table public.recommendations enable row level security;
 
@@ -110,6 +130,8 @@ grant select on public.skills to authenticated;
 grant select on public.missions to authenticated;
 grant select, insert, update, delete on public.attempts to authenticated;
 grant select, insert, update, delete on public.mission_progress to authenticated;
+grant select, insert, update, delete on public.class_rooms to authenticated;
+grant select, insert, update, delete on public.class_memberships to authenticated;
 grant select, insert, update, delete on public.test_sessions to authenticated;
 grant select, insert, update, delete on public.recommendations to authenticated;
 
@@ -123,6 +145,19 @@ create policy "children owned by current profile" on public.child_profiles
   for all using ((select auth.uid()) = owner_id)
   with check ((select auth.uid()) = owner_id);
 
+drop policy if exists "children visible to class teachers" on public.child_profiles;
+create policy "children visible to class teachers" on public.child_profiles
+  for select using (
+    exists (
+      select 1
+      from public.class_memberships cm
+      join public.class_rooms cr on cr.id = cm.class_id
+      where cm.child_id = child_profiles.id
+        and cm.status = 'active'
+        and cr.teacher_id = (select auth.uid())
+    )
+  );
+
 drop policy if exists "skills readable by authenticated users" on public.skills;
 create policy "skills readable by authenticated users" on public.skills
   for select to authenticated using (true);
@@ -130,6 +165,36 @@ create policy "skills readable by authenticated users" on public.skills
 drop policy if exists "missions readable by authenticated users" on public.missions;
 create policy "missions readable by authenticated users" on public.missions
   for select to authenticated using (true);
+
+drop policy if exists "class rooms owned by teachers" on public.class_rooms;
+create policy "class rooms owned by teachers" on public.class_rooms
+  for all using ((select auth.uid()) = teacher_id)
+  with check (
+    (select auth.uid()) = teacher_id
+    and exists (
+      select 1 from public.profiles p
+      where p.id = (select auth.uid()) and p.role = 'teacher'
+    )
+  );
+
+drop policy if exists "class memberships for owning teachers" on public.class_memberships;
+create policy "class memberships for owning teachers" on public.class_memberships
+  for all using (
+    exists (
+      select 1 from public.class_rooms cr
+      where cr.id = class_memberships.class_id and cr.teacher_id = (select auth.uid())
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.class_rooms cr
+      where cr.id = class_memberships.class_id and cr.teacher_id = (select auth.uid())
+    )
+    and exists (
+      select 1 from public.child_profiles c
+      where c.id = class_memberships.child_id and c.owner_id = (select auth.uid())
+    )
+  );
 
 drop policy if exists "attempts for owned children" on public.attempts;
 create policy "attempts for owned children" on public.attempts
@@ -146,6 +211,19 @@ create policy "attempts for owned children" on public.attempts
     )
   );
 
+drop policy if exists "attempts visible to class teachers" on public.attempts;
+create policy "attempts visible to class teachers" on public.attempts
+  for select using (
+    exists (
+      select 1
+      from public.class_memberships cm
+      join public.class_rooms cr on cr.id = cm.class_id
+      where cm.child_id = attempts.child_id
+        and cm.status = 'active'
+        and cr.teacher_id = (select auth.uid())
+    )
+  );
+
 drop policy if exists "mission progress for owned children" on public.mission_progress;
 create policy "mission progress for owned children" on public.mission_progress
   for all using (
@@ -158,6 +236,19 @@ create policy "mission progress for owned children" on public.mission_progress
     exists (
       select 1 from public.child_profiles c
       where c.id = mission_progress.child_id and c.owner_id = (select auth.uid())
+    )
+  );
+
+drop policy if exists "mission progress visible to class teachers" on public.mission_progress;
+create policy "mission progress visible to class teachers" on public.mission_progress
+  for select using (
+    exists (
+      select 1
+      from public.class_memberships cm
+      join public.class_rooms cr on cr.id = cm.class_id
+      where cm.child_id = mission_progress.child_id
+        and cm.status = 'active'
+        and cr.teacher_id = (select auth.uid())
     )
   );
 
@@ -274,6 +365,9 @@ create index if not exists attempts_child_created_idx on public.attempts (child_
 create index if not exists attempts_child_module_idx on public.attempts (child_id, module_id);
 create index if not exists attempts_child_mission_idx on public.attempts (child_id, mission_id);
 create index if not exists mission_progress_child_activity_idx on public.mission_progress (child_id, last_activity_at desc);
+create index if not exists class_rooms_teacher_idx on public.class_rooms (teacher_id, created_at desc);
+create index if not exists class_memberships_class_idx on public.class_memberships (class_id, status);
+create index if not exists class_memberships_child_idx on public.class_memberships (child_id, status);
 
 insert into public.skills (id, module_id, title, grade_min, grade_max, description) values
   ('addition', 'arithmetic', 'Plus und Minus sicher rechnen', 1, 6, 'Grundrechenarten und Kopfrechnen'),

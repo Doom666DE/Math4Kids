@@ -13,6 +13,7 @@ import {
   Lock,
   LogOut,
   Play,
+  School,
   Shapes,
   Sparkles,
   Star,
@@ -51,6 +52,10 @@ function App() {
   const [activeChild, setActiveChild] = useState(null);
   const [attempts, setAttempts] = useState([]);
   const [missionProgress, setMissionProgress] = useState([]);
+  const [classRooms, setClassRooms] = useState([]);
+  const [activeClass, setActiveClass] = useState(null);
+  const [classChildren, setClassChildren] = useState([]);
+  const [classAttempts, setClassAttempts] = useState([]);
   const [view, setView] = useState("lernen");
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +77,10 @@ function App() {
           ]);
           setAttempts(loadedAttempts);
           setMissionProgress(loadedProgress);
+        }
+        if (currentSession.role === "teacher") {
+          await refreshTeacherData();
+          setView("klassen");
         }
       }
       setLoading(false);
@@ -100,14 +109,37 @@ function App() {
     }
   }
 
+  async function refreshTeacherData(selectedClass = activeClass, filters = {}) {
+    const loadedClasses = await store.listClasses();
+    const nextClass = selectedClass ? loadedClasses.find((item) => item.id === selectedClass.id) ?? loadedClasses[0] : loadedClasses[0];
+    setClassRooms(loadedClasses);
+    setActiveClass(nextClass ?? null);
+    if (nextClass) {
+      const [loadedClassChildren, loadedClassAttempts] = await Promise.all([
+        store.listClassChildren(nextClass.id),
+        store.listClassAttempts(nextClass.id, filters),
+      ]);
+      setClassChildren(loadedClassChildren);
+      setClassAttempts(loadedClassAttempts);
+    } else {
+      setClassChildren([]);
+      setClassAttempts([]);
+    }
+  }
+
   async function handleSignedIn(nextSession) {
     setSession(nextSession);
     await refreshChildData(null);
+    if (nextSession.role === "teacher") {
+      await refreshTeacherData(null);
+      setView("klassen");
+    }
   }
 
   async function handleCreateChild(profile) {
     const child = await store.createChildProfile(profile);
     await refreshChildData(child);
+    if (session?.role === "teacher") await refreshTeacherData();
   }
 
   async function handleSelectChild(child, pin) {
@@ -141,6 +173,24 @@ function App() {
     setActiveChild(null);
     setAttempts([]);
     setMissionProgress([]);
+    setClassRooms([]);
+    setActiveClass(null);
+    setClassChildren([]);
+    setClassAttempts([]);
+  }
+
+  async function handleCreateClassRoom(classRoom) {
+    const created = await store.createClassRoom(classRoom);
+    await refreshTeacherData(created);
+  }
+
+  async function handleAssignChildToClass(classId, childId) {
+    await store.assignChildToClass(classId, childId);
+    await refreshTeacherData(activeClass);
+  }
+
+  async function handleSelectClass(classRoom, filters = {}) {
+    await refreshTeacherData(classRoom, filters);
   }
 
   if (loading) {
@@ -155,7 +205,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar view={view} setView={setView} onSignOut={handleSignOut} />
+      <Sidebar view={view} setView={setView} onSignOut={handleSignOut} session={session} />
       <main className="workspace">
         <Topbar
           activeChild={activeChild}
@@ -177,6 +227,18 @@ function App() {
         {view === "tests" && <TestsView activeChild={activeChild} attempts={attempts} onAttempt={handleAttempt} />}
         {view === "kinder" && (
           <ChildrenView children={children} activeChild={activeChild} onCreateChild={handleCreateChild} onSelectChild={handleSelectChild} />
+        )}
+        {view === "klassen" && session.role === "teacher" && (
+          <ClassesView
+            classRooms={classRooms}
+            activeClass={activeClass}
+            classChildren={classChildren}
+            classAttempts={classAttempts}
+            children={children}
+            onCreateClassRoom={handleCreateClassRoom}
+            onAssignChildToClass={handleAssignChildToClass}
+            onSelectClass={handleSelectClass}
+          />
         )}
         {view === "dashboard" && (
           <AdultDashboard activeChild={activeChild} attempts={attempts} missionProgress={missionProgress} summary={summary} />
@@ -278,11 +340,12 @@ function AuthScreen({ onSignedIn }) {
   );
 }
 
-function Sidebar({ view, setView, onSignOut }) {
+function Sidebar({ view, setView, onSignOut, session }) {
   const items = [
     ["lernen", "Lernen", BookOpen],
     ["tests", "Tests", ClipboardList],
     ["kinder", "Kinder", Users],
+    ...(session.role === "teacher" ? [["klassen", "Klassen", School]] : []),
     ["dashboard", "Dashboard", LayoutDashboard],
   ];
   return (
@@ -317,7 +380,9 @@ function Topbar({ activeChild, children, onSelectChild, onCreateChild, session }
       <div>
         <p className="section-label">Lernplattform</p>
         <h1>{activeChild ? `${activeChild.name} startet Mathe-Missionen.` : "Erstelle zuerst ein Kinderprofil."}</h1>
-        <span className="muted-line">{session.email} · {store.isSupabaseEnabled ? "Supabase verbunden" : "Demo-Modus"}</span>
+        <span className="muted-line">
+          {session.email} · {session.role === "teacher" ? "Lehrkraft" : "Elternteil"} · {store.isSupabaseEnabled ? "Supabase verbunden" : "Demo-Modus"}
+        </span>
       </div>
       <div className="topbar-actions">
         {children.map((child) => (
@@ -771,6 +836,186 @@ function ChildrenView({ children, activeChild, onCreateChild, onSelectChild }) {
   );
 }
 
+function ClassesView({ classRooms, activeClass, classChildren, classAttempts, children, onCreateClassRoom, onAssignChildToClass, onSelectClass }) {
+  const [filters, setFilters] = useState({ childId: "", moduleId: "", result: "", errorType: "" });
+  const [childToAssign, setChildToAssign] = useState("");
+  const classSummary = summarizeAttempts(classAttempts);
+  const assignableChildren = children.filter((child) => !classChildren.some((classChild) => classChild.id === child.id));
+
+  async function updateFilters(nextFilters) {
+    setFilters(nextFilters);
+    if (activeClass) await onSelectClass(activeClass, nextFilters);
+  }
+
+  async function assignChild(event) {
+    event.preventDefault();
+    if (!activeClass || !childToAssign) return;
+    await onAssignChildToClass(activeClass.id, childToAssign);
+    setChildToAssign("");
+  }
+
+  return (
+    <section className="teacher-grid">
+      <div className="panel">
+        <p className="section-label">Klassen</p>
+        <h2>Eigene Klassen</h2>
+        <div className="class-list">
+          {classRooms.map((classRoom) => (
+            <button
+              key={classRoom.id}
+              className={activeClass?.id === classRoom.id ? "class-card active" : "class-card"}
+              type="button"
+              onClick={() => onSelectClass(classRoom, filters)}
+            >
+              <School size={22} />
+              <span>
+                <strong>{classRoom.name}</strong>
+                <small>Klasse {classRoom.grade} · {classRoom.school_year}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+        <ClassRoomForm onCreateClassRoom={onCreateClassRoom} />
+      </div>
+
+      <div className="panel">
+        <p className="section-label">Schüler</p>
+        <h2>{activeClass ? activeClass.name : "Keine Klasse ausgewählt"}</h2>
+        {activeClass ? (
+          <>
+            <form className="inline-form" onSubmit={assignChild}>
+              <label>
+                Kind zuordnen
+                <select value={childToAssign} onChange={(event) => setChildToAssign(event.target.value)}>
+                  <option value="">Auswählen</option>
+                  {assignableChildren.map((child) => (
+                    <option key={child.id} value={child.id}>{child.name} · Klasse {child.grade}</option>
+                  ))}
+                </select>
+              </label>
+              <button className="primary-button" type="submit" disabled={!childToAssign}>Zuordnen</button>
+            </form>
+            <div className="child-list compact-list">
+              {classChildren.map((child) => (
+                <div className="child-card static" key={child.id}>
+                  <span>{child.avatar}</span>
+                  <strong>{child.name}</strong>
+                  <small>Klasse {child.grade}</small>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="muted-line">Lege eine Klasse an, um Kinder zuzuordnen.</p>
+        )}
+      </div>
+
+      <div className="panel hero-panel">
+        <p className="section-label">Klassenlernstand</p>
+        <h2>{activeClass ? `${activeClass.name}: Übersicht` : "Noch keine Daten"}</h2>
+        <div className="metric-row">
+          <Metric label="Antworten" value={classSummary.total} />
+          <Metric label="Richtig" value={`${classSummary.accuracy}%`} />
+          <Metric label="Kinder" value={classChildren.length} />
+          <Metric label="Fehlerarten" value={classSummary.topErrorTypes.length} />
+        </div>
+      </div>
+
+      <div className="panel wide">
+        <div className="panel-head">
+          <div>
+            <p className="section-label">Antwortdetails</p>
+            <h2>Alle Eingaben der Klasse</h2>
+          </div>
+        </div>
+        <ClassAttemptFilters filters={filters} children={classChildren} attempts={classAttempts} onChange={updateFilters} />
+        <AttemptTable attempts={classAttempts} detailed showChild />
+      </div>
+    </section>
+  );
+}
+
+function ClassRoomForm({ onCreateClassRoom }) {
+  const [name, setName] = useState("");
+  const [grade, setGrade] = useState(5);
+  const [schoolYear, setSchoolYear] = useState("2026/2027");
+  const [error, setError] = useState("");
+
+  async function submit(event) {
+    event.preventDefault();
+    setError("");
+    try {
+      await onCreateClassRoom({ name, grade: Number(grade), schoolYear });
+      setName("");
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  return (
+    <form className="class-form" onSubmit={submit}>
+      <label>
+        Klassenname
+        <input value={name} onChange={(event) => setName(event.target.value)} placeholder="5a" required />
+      </label>
+      <div className="form-row">
+        <label>
+          Stufe
+          <select value={grade} onChange={(event) => setGrade(event.target.value)}>
+            {Array.from({ length: 10 }, (_, index) => index + 1).map((item) => <option key={item}>{item}</option>)}
+          </select>
+        </label>
+        <label>
+          Schuljahr
+          <input value={schoolYear} onChange={(event) => setSchoolYear(event.target.value)} required />
+        </label>
+      </div>
+      {error && <p className="form-error">{error}</p>}
+      <button className="primary-button" type="submit">Klasse anlegen</button>
+    </form>
+  );
+}
+
+function ClassAttemptFilters({ filters, children, attempts, onChange }) {
+  const errorTypes = [...new Set(attempts.map((attempt) => attempt.error_type).filter(Boolean))].sort();
+  function next(key, value) {
+    onChange({ ...filters, [key]: value });
+  }
+  return (
+    <div className="filter-grid">
+      <label>
+        Kind
+        <select value={filters.childId} onChange={(event) => next("childId", event.target.value)}>
+          <option value="">Alle</option>
+          {children.map((child) => <option key={child.id} value={child.id}>{child.name}</option>)}
+        </select>
+      </label>
+      <label>
+        Thema
+        <select value={filters.moduleId} onChange={(event) => next("moduleId", event.target.value)}>
+          <option value="">Alle</option>
+          {learningModules.map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
+        </select>
+      </label>
+      <label>
+        Ergebnis
+        <select value={filters.result} onChange={(event) => next("result", event.target.value)}>
+          <option value="">Alle</option>
+          <option value="correct">Richtig</option>
+          <option value="wrong">Falsch</option>
+        </select>
+      </label>
+      <label>
+        Fehlerart
+        <select value={filters.errorType} onChange={(event) => next("errorType", event.target.value)}>
+          <option value="">Alle</option>
+          {errorTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+        </select>
+      </label>
+    </div>
+  );
+}
+
 function AdultDashboard({ activeChild, attempts, missionProgress, summary }) {
   if (!activeChild) {
     return <EmptyState title="Kein Lernstand verfügbar" text="Lege ein Kinderprofil an und löse Aufgaben, um Empfehlungen zu sehen." />;
@@ -881,20 +1126,93 @@ function MissionProgressList({ progressItems, compact = false }) {
   );
 }
 
-function AttemptTable({ attempts, compact = false }) {
+function AttemptTable({ attempts, compact = false, detailed = false, showChild = false }) {
+  const [selectedAttempt, setSelectedAttempt] = useState(null);
   if (!attempts.length) {
     return <p className="muted-line">Noch keine Antworten gespeichert.</p>;
   }
   return (
-    <div className="attempt-table">
-      {attempts.map((attempt) => (
-        <div className="attempt-row" key={attempt.id}>
-          <span>{moduleTitle(attempt.module_id)}</span>
-          {!compact && <span>{attempt.prompt}</span>}
-          {!compact && <span>{attempt.error_type || "ok"}</span>}
-          <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "üben"}</strong>
+    <>
+      <div className={detailed ? "attempt-table detailed" : "attempt-table"}>
+        {detailed && (
+          <div className="attempt-row header">
+            {showChild && <span>Kind</span>}
+            <span>Aufgabe</span>
+            <span>Eingabe</span>
+            <span>Lösung</span>
+            <span>Hilfen</span>
+            <span>Dauer</span>
+            <span>Fehlerart</span>
+            <span>Zeitpunkt</span>
+            <span>Ergebnis</span>
+          </div>
+        )}
+        {attempts.map((attempt) => (
+          <button
+            className={detailed ? "attempt-row detailed-row" : "attempt-row"}
+            key={attempt.id}
+            type="button"
+            onClick={() => setSelectedAttempt(attempt)}
+          >
+            {detailed ? (
+              <>
+                {showChild && <span>{attempt.child?.name ?? "Kind"}</span>}
+                <span>{attempt.prompt}</span>
+                <span>{attempt.given_answer || "-"}</span>
+                <span>{attempt.expected_answer}</span>
+                <span>{attempt.hint_count ?? 0}</span>
+                <span>{formatDuration(attempt.duration_ms)}</span>
+                <span>{attempt.error_type || "ok"}</span>
+                <span>{formatDateTime(attempt.created_at)}</span>
+                <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "falsch"}</strong>
+              </>
+            ) : (
+              <>
+                <span>{moduleTitle(attempt.module_id)}</span>
+                {!compact && <span>{attempt.prompt}</span>}
+                {!compact && <span>{attempt.error_type || "ok"}</span>}
+                <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "üben"}</strong>
+              </>
+            )}
+          </button>
+        ))}
+      </div>
+      {selectedAttempt && (
+        <AttemptDetailDialog attempt={selectedAttempt} onClose={() => setSelectedAttempt(null)} />
+      )}
+    </>
+  );
+}
+
+function AttemptDetailDialog({ attempt, onClose }) {
+  return (
+    <div className="dialog-backdrop">
+      <section className="dialog attempt-detail">
+        <div className="panel-head">
+          <div>
+            <p className="section-label">Aufgabendetail</p>
+            <h2>{attempt.child?.name ? `${attempt.child.name}: ${moduleTitle(attempt.module_id)}` : moduleTitle(attempt.module_id)}</h2>
+          </div>
         </div>
-      ))}
+        <dl className="detail-grid">
+          <div><dt>Aufgabe</dt><dd>{attempt.prompt}</dd></div>
+          <div><dt>Eingabe</dt><dd>{attempt.given_answer || "-"}</dd></div>
+          <div><dt>Richtige Lösung</dt><dd>{attempt.expected_answer}</dd></div>
+          <div><dt>Ergebnis</dt><dd className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "falsch"}</dd></div>
+          <div><dt>Mission</dt><dd>{missionTitle(attempt.mission_id)}</dd></div>
+          <div><dt>Modul / Skill</dt><dd>{moduleTitle(attempt.module_id)} · {attempt.skill_id}</dd></div>
+          <div><dt>Level</dt><dd>{attempt.level ?? attempt.grade_level ?? "-"}</dd></div>
+          <div><dt>Hilfen</dt><dd>{attempt.hint_count ?? 0}</dd></div>
+          <div><dt>Sterne</dt><dd>{attempt.stars_awarded ?? 0}</dd></div>
+          <div><dt>Dauer</dt><dd>{formatDuration(attempt.duration_ms)}</dd></div>
+          <div><dt>Fehlerart</dt><dd>{attempt.error_type || "keine"}</dd></div>
+          <div><dt>Zeitpunkt</dt><dd>{formatDateTime(attempt.created_at)}</dd></div>
+          <div className="full"><dt>Erklärung</dt><dd>{attempt.explanation || "Keine Erklärung gespeichert."}</dd></div>
+        </dl>
+        <div className="dialog-actions">
+          <button className="primary-button" type="button" onClick={onClose}>Schließen</button>
+        </div>
+      </section>
     </div>
   );
 }
@@ -920,6 +1238,24 @@ function EmptyState({ title, text }) {
 
 function moduleTitle(moduleId) {
   return learningModules.find((item) => item.id === moduleId)?.title ?? moduleId;
+}
+
+function missionTitle(missionId) {
+  return missions.find((item) => item.id === missionId)?.title ?? missionId ?? "-";
+}
+
+function formatDuration(durationMs = 0) {
+  if (!durationMs) return "-";
+  const seconds = Math.max(1, Math.round(durationMs / 1000));
+  return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+}
+
+function formatDateTime(value) {
+  if (!value) return "-";
+  return new Intl.DateTimeFormat("de-DE", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(value));
 }
 
 function pickAvatar(name) {

@@ -12,7 +12,8 @@ function createSupabaseStore() {
     async getSession() {
       const supabase = await getSupabaseClient();
       const { data } = await supabase.auth.getSession();
-      return data.session?.user ? { id: data.session.user.id, email: data.session.user.email } : null;
+      if (!data.session?.user) return null;
+      return profileSession(supabase, data.session.user);
     },
     async signUp({ email, password, role }) {
       const supabase = await getSupabaseClient();
@@ -22,13 +23,13 @@ function createSupabaseStore() {
         options: { data: { role } },
       });
       if (error) throw error;
-      return { id: data.user?.id ?? email, email };
+      return { id: data.user?.id ?? email, email, role };
     },
     async signIn({ email, password }) {
       const supabase = await getSupabaseClient();
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      return { id: data.user.id, email: data.user.email };
+      return profileSession(supabase, data.user);
     },
     async signOut() {
       const supabase = await getSupabaseClient();
@@ -102,13 +103,94 @@ function createSupabaseStore() {
       if (error) throw error;
       return data;
     },
+    async listClasses() {
+      const supabase = await getSupabaseClient();
+      const { data, error } = await supabase
+        .from("class_rooms")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+    async createClassRoom({ name, grade, schoolYear }) {
+      const supabase = await getSupabaseClient();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      const { data, error } = await supabase
+        .from("class_rooms")
+        .insert({ teacher_id: userData.user.id, name, grade, school_year: schoolYear })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    async assignChildToClass(classId, childId) {
+      const supabase = await getSupabaseClient();
+      const { data, error } = await supabase
+        .from("class_memberships")
+        .upsert({ class_id: classId, child_id: childId, status: "active" }, { onConflict: "class_id,child_id" })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    async listClassChildren(classId) {
+      const supabase = await getSupabaseClient();
+      const { data, error } = await supabase
+        .from("class_memberships")
+        .select("id,status,created_at,child:child_profiles(id,name,grade,avatar,created_at)")
+        .eq("class_id", classId)
+        .eq("status", "active")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data ?? []).map((membership) => ({ ...membership.child, membership_id: membership.id, membership_status: membership.status }));
+    },
+    async listClassAttempts(classId, filters = {}) {
+      const children = await this.listClassChildren(classId);
+      if (!children.length) return [];
+      const childMap = new Map(children.map((child) => [child.id, child]));
+      const supabase = await getSupabaseClient();
+      let query = supabase
+        .from("attempts")
+        .select("*")
+        .in("child_id", children.map((child) => child.id))
+        .order("created_at", { ascending: false })
+        .limit(500);
+      if (filters.childId) query = query.eq("child_id", filters.childId);
+      if (filters.moduleId) query = query.eq("module_id", filters.moduleId);
+      if (filters.result === "correct") query = query.eq("is_correct", true);
+      if (filters.result === "wrong") query = query.eq("is_correct", false);
+      if (filters.errorType) query = query.eq("error_type", filters.errorType);
+      const { data, error } = await query;
+      if (error) throw error;
+      return (data ?? []).map((attempt) => ({ ...attempt, child: childMap.get(attempt.child_id) ?? null }));
+    },
   };
 }
 
-function createDemoStore() {
+async function profileSession(supabase, user) {
+  const { data } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  return {
+    id: user.id,
+    email: user.email,
+    role: data?.role ?? user.user_metadata?.role ?? "parent",
+  };
+}
+
+export function createDemoStore() {
   const read = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : { session: null, children: [], attempts: [] };
+    const state = raw ? JSON.parse(raw) : {};
+    return {
+      session: null,
+      accounts: [],
+      children: [],
+      attempts: [],
+      missionProgress: [],
+      classRooms: [],
+      classMemberships: [],
+      ...state,
+    };
   };
   const write = (value) => localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   return {
@@ -116,15 +198,20 @@ function createDemoStore() {
     async getSession() {
       return read().session;
     },
-    async signUp({ email }) {
+    async signUp({ email, role = "parent" }) {
       const state = read();
-      state.session = { id: "demo-user", email };
+      const existing = state.accounts.find((account) => account.email === email);
+      const account = existing ?? { id: `demo-user-${Date.now()}`, email, role };
+      if (!existing) state.accounts.push(account);
+      state.session = { id: account.id, email, role: account.role };
       write(state);
       return state.session;
     },
     async signIn({ email }) {
       const state = read();
-      state.session = { id: "demo-user", email };
+      const account = state.accounts.find((item) => item.email === email) ?? { id: "demo-user", email, role: "parent" };
+      if (!state.accounts.some((item) => item.email === email)) state.accounts.push(account);
+      state.session = { id: account.id, email, role: account.role };
       write(state);
       return state.session;
     },
@@ -192,6 +279,61 @@ function createDemoStore() {
       }
       write(state);
       return saved;
+    },
+    async listClasses() {
+      const state = read();
+      return state.classRooms.filter((classRoom) => classRoom.teacher_id === state.session?.id);
+    },
+    async createClassRoom({ name, grade, schoolYear }) {
+      const state = read();
+      const created = {
+        id: `class-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        teacher_id: state.session?.id ?? "demo-user",
+        name,
+        grade: Number(grade),
+        school_year: schoolYear,
+        created_at: new Date().toISOString(),
+      };
+      state.classRooms.push(created);
+      write(state);
+      return created;
+    },
+    async assignChildToClass(classId, childId) {
+      const state = read();
+      const existing = state.classMemberships.find((item) => item.class_id === classId && item.child_id === childId);
+      const membership = existing ?? {
+        id: `membership-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        class_id: classId,
+        child_id: childId,
+        status: "active",
+        created_at: new Date().toISOString(),
+      };
+      if (existing) {
+        existing.status = "active";
+      } else {
+        state.classMemberships.push(membership);
+      }
+      write(state);
+      return membership;
+    },
+    async listClassChildren(classId) {
+      const state = read();
+      const childIds = new Set(state.classMemberships.filter((item) => item.class_id === classId && item.status === "active").map((item) => item.child_id));
+      return state.children.filter((child) => childIds.has(child.id));
+    },
+    async listClassAttempts(classId, filters = {}) {
+      const state = read();
+      const childMap = new Map(state.children.map((child) => [child.id, child]));
+      const childIds = new Set(state.classMemberships.filter((item) => item.class_id === classId && item.status === "active").map((item) => item.child_id));
+      return state.attempts
+        .filter((attempt) => childIds.has(attempt.child_id))
+        .filter((attempt) => !filters.childId || attempt.child_id === filters.childId)
+        .filter((attempt) => !filters.moduleId || attempt.module_id === filters.moduleId)
+        .filter((attempt) => filters.result !== "correct" || attempt.is_correct)
+        .filter((attempt) => filters.result !== "wrong" || !attempt.is_correct)
+        .filter((attempt) => !filters.errorType || attempt.error_type === filters.errorType)
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        .map((attempt) => ({ ...attempt, child: childMap.get(attempt.child_id) ?? null }));
     },
   };
 }

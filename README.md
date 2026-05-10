@@ -4,7 +4,7 @@
 
 Eine Mathe-Lernplattform für Kinder in Grundschule und Sek I. Kinder üben in
 Missionen mit Hilfe-Stufen, Sternen und Abzeichen; Erwachsene sehen Lernstand,
-Fehlerarten und Empfehlungen.
+Fehlerarten, Empfehlungen und bei Lehrkräften detaillierte Klassenprotokolle.
 
 ## Starten
 
@@ -24,8 +24,9 @@ Danach ist die App unter `http://localhost:5173` erreichbar. Ohne Supabase-Varia
 3. `VITE_SUPABASE_URL` und `VITE_SUPABASE_ANON_KEY` als GitHub Actions Repository Variables setzen.
 4. Lokal optional `.env` aus `.env.example` erstellen.
 
-Das Schema legt `missions`, `mission_progress`, `attempts`, `child_profiles`
-und die nötigen RLS-Policies an. Der Service-Role-Key gehört nie ins Frontend.
+Das Schema legt `missions`, `mission_progress`, `attempts`, `child_profiles`,
+`class_rooms`, `class_memberships` und die nötigen RLS-Policies an. Der
+Service-Role-Key gehört nie ins Frontend.
 
 ## Online öffnen
 
@@ -37,6 +38,8 @@ https://doom666de.github.io/Math4Kids/
 
 - Eltern/Lehrer-Login mit Supabase Auth oder Demo-Modus
 - Kinderprofile mit PIN
+- Lehrer-Klassen mit Schülerzuordnung
+- Detaillierte Antwortprotokolle: Aufgabe, Eingabe, richtige Lösung, Hilfen, Dauer, Fehlerart, Mission und Zeitpunkt
 - Missionen: Zahlenwelt, Bruch-Pizza, Komma-Werkstatt, Prozent-Shop, Geometrie-Labor, Einheiten-Reise, Textaufgaben-Detektiv, Gleichungs-Dojo, Koordinaten-Karte, Statistik-Studio
 - Module: Grundrechenarten, Brüche, Dezimalzahlen, Prozent, Geometrie, Maße, Textaufgaben, Gleichungen, Koordinaten, Statistik
 - Schrittweise Tipps, Sterne, Mission-Abschluss und Abzeichen
