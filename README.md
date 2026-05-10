@@ -1,5 +1,7 @@
 # Math4Kids
 
+[![App starten](https://img.shields.io/badge/App%20starten-18A999?style=for-the-badge&logo=githubpages&logoColor=white)](https://doom666de.github.io/Math4Kids/)
+
 Eine kleine Mathe-Übungs-App für Kinder. Sie läuft komplett im Browser und
 braucht kein Backend.
 
@@ -12,6 +14,12 @@ python -m http.server 5173
 ```
 
 Danach ist die App unter `http://localhost:5173` erreichbar.
+
+## Online öffnen
+
+Wenn GitHub Pages für dieses Repository aktiviert ist:
+
+https://doom666de.github.io/Math4Kids/
 
 ## Funktionen
 
