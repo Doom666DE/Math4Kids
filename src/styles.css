@@ -141,6 +141,7 @@ button {
 .auth-card,
 .child-form,
 .dialog,
+.mission-map,
 .panel,
 .practice-panel,
 .progress-aside > section {
@@ -243,6 +244,11 @@ select:focus {
   color: var(--teal-dark);
 }
 
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .form-error {
   margin: 0;
   color: #a33d32;
@@ -342,6 +348,10 @@ select:focus {
   align-items: start;
 }
 
+.mission-layout {
+  grid-template-columns: 360px minmax(0, 1fr) 330px;
+}
+
 .module-column,
 .panel,
 .practice-panel {
@@ -383,9 +393,93 @@ select:focus {
 .module-card.active,
 .module-card:hover,
 .test-item.active,
-.child-card.active {
+.child-card.active,
+.mission-card.active,
+.mission-card:hover {
   border-color: var(--teal);
   background: #eefaf8;
+}
+
+.mission-map {
+  padding: 22px;
+}
+
+.mission-list,
+.mission-progress-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.mission-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
+  text-align: left;
+}
+
+.mission-card.completed {
+  border-color: rgba(104, 189, 125, 0.7);
+  background: #effaf2;
+}
+
+.mission-visual {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 8px;
+  background: #fff5d9;
+  color: var(--teal-dark);
+  font-weight: 900;
+}
+
+.mission-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mission-copy small,
+.mission-meta {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mission-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.progress-track {
+  grid-column: 1 / -1;
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dcebf2;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+}
+
+.progress-track.large {
+  height: 12px;
+  margin: 16px 0;
 }
 
 .practice-panel,
@@ -414,6 +508,72 @@ select:focus {
   background:
     linear-gradient(135deg, rgba(255,255,255,0.96), rgba(239,249,247,0.92)),
     repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(24,169,153,0.08) 39px);
+}
+
+.mission-player {
+  min-width: 0;
+}
+
+.mission-status,
+.mission-recap,
+.compact-mission-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mission-status {
+  margin-top: 16px;
+}
+
+.mission-status span,
+.compact-mission-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: #f4f8fb;
+  color: #31506b;
+  font-weight: 900;
+}
+
+.hint-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.hint {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 11px 12px;
+  border-radius: 8px;
+  background: #fff8df;
+  color: #6d5720;
+  font-weight: 900;
+}
+
+.mission-complete {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  margin-top: 18px;
+  padding: clamp(20px, 3vw, 34px);
+  border: 1px solid rgba(104, 189, 125, 0.55);
+  border-radius: var(--radius);
+  background: #effaf2;
+  color: #217245;
+}
+
+.mission-complete h3,
+.mission-complete p {
+  margin: 0;
+}
+
+.mission-recap {
+  margin-top: 16px;
 }
 
 .question-visual {
@@ -511,7 +671,7 @@ select:focus {
 
 .attempt-row {
   display: grid;
-  grid-template-columns: 130px minmax(0, 1fr) 74px;
+  grid-template-columns: 150px minmax(0, 1fr) 120px 74px;
   gap: 10px;
   align-items: center;
   padding: 10px 12px;
@@ -661,14 +821,36 @@ select:focus {
   gap: 10px;
 }
 
+.mission-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f5f9fc;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.mission-progress-list.compact .mission-progress-row:nth-child(n + 5) {
+  display: none;
+}
+
 @media (max-width: 1180px) {
   .learning-grid,
+  .mission-layout,
   .dashboard-grid,
   .two-column {
     grid-template-columns: 1fr;
   }
 
   .module-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mission-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -705,6 +887,15 @@ select:focus {
     align-items: stretch;
     flex-direction: column;
   }
+
+  .mission-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .mission-meta {
+    grid-column: 2;
+    justify-self: start;
+  }
 }
 
 @media (max-width: 620px) {
@@ -713,6 +904,7 @@ select:focus {
   }
 
   .module-grid,
+  .mission-list,
   .metric-row {
     grid-template-columns: 1fr;
   }

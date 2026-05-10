@@ -72,11 +72,31 @@ function createSupabaseStore() {
       if (error) throw error;
       return data ?? [];
     },
+    async listMissionProgress(childId) {
+      const supabase = await getSupabaseClient();
+      const { data, error } = await supabase
+        .from("mission_progress")
+        .select("*")
+        .eq("child_id", childId)
+        .order("last_activity_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
     async recordAttempt(childId, attempt) {
       const supabase = await getSupabaseClient();
       const { data, error } = await supabase
         .from("attempts")
         .insert({ child_id: childId, ...attempt })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    async upsertMissionProgress(childId, progress) {
+      const supabase = await getSupabaseClient();
+      const { data, error } = await supabase
+        .from("mission_progress")
+        .upsert({ child_id: childId, ...progress }, { onConflict: "child_id,mission_id" })
         .select("*")
         .single();
       if (error) throw error;
@@ -139,6 +159,11 @@ function createDemoStore() {
     async listAttempts(childId) {
       return read().attempts.filter((attempt) => attempt.child_id === childId).sort((a, b) => b.created_at.localeCompare(a.created_at));
     },
+    async listMissionProgress(childId) {
+      return read()
+        .missionProgress?.filter((progress) => progress.child_id === childId)
+        .sort((a, b) => b.last_activity_at.localeCompare(a.last_activity_at)) ?? [];
+    },
     async recordAttempt(childId, attempt) {
       const state = read();
       const saved = {
@@ -148,6 +173,23 @@ function createDemoStore() {
         ...attempt,
       };
       state.attempts.unshift(saved);
+      write(state);
+      return saved;
+    },
+    async upsertMissionProgress(childId, progress) {
+      const state = read();
+      state.missionProgress = state.missionProgress ?? [];
+      const index = state.missionProgress.findIndex((item) => item.child_id === childId && item.mission_id === progress.mission_id);
+      const saved = {
+        id: index >= 0 ? state.missionProgress[index].id : `progress-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        child_id: childId,
+        ...progress,
+      };
+      if (index >= 0) {
+        state.missionProgress[index] = saved;
+      } else {
+        state.missionProgress.push(saved);
+      }
       write(state);
       return saved;
     },

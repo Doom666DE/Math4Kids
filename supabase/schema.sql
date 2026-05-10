@@ -26,6 +26,19 @@ create table if not exists public.skills (
   description text not null default ''
 );
 
+create table if not exists public.missions (
+  id text primary key,
+  module_id text not null,
+  title text not null,
+  description text not null,
+  badge text not null,
+  visual text not null,
+  grade_min int not null check (grade_min between 1 and 10),
+  grade_max int not null check (grade_max between 1 and 10),
+  target_count int not null default 6 check (target_count > 0),
+  sort_order int not null
+);
+
 create table if not exists public.attempts (
   id uuid primary key default gen_random_uuid(),
   child_id uuid not null references public.child_profiles(id) on delete cascade,
@@ -42,6 +55,25 @@ create table if not exists public.attempts (
   grade_level text not null,
   test_id text,
   created_at timestamptz not null default now()
+);
+
+alter table public.attempts add column if not exists mission_id text references public.missions(id);
+alter table public.attempts add column if not exists level int check (level is null or level between 1 and 10);
+alter table public.attempts add column if not exists hint_count int not null default 0 check (hint_count >= 0);
+alter table public.attempts add column if not exists stars_awarded int not null default 0 check (stars_awarded between 0 and 3);
+
+create table if not exists public.mission_progress (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid not null references public.child_profiles(id) on delete cascade,
+  mission_id text not null references public.missions(id) on delete cascade,
+  level int not null check (level between 1 and 10),
+  stars int not null default 0 check (stars >= 0),
+  attempts_count int not null default 0 check (attempts_count >= 0),
+  correct_count int not null default 0 check (correct_count >= 0),
+  completed boolean not null default false,
+  last_activity_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  unique (child_id, mission_id)
 );
 
 create table if not exists public.test_sessions (
@@ -66,24 +98,40 @@ create table if not exists public.recommendations (
 alter table public.profiles enable row level security;
 alter table public.child_profiles enable row level security;
 alter table public.skills enable row level security;
+alter table public.missions enable row level security;
 alter table public.attempts enable row level security;
+alter table public.mission_progress enable row level security;
 alter table public.test_sessions enable row level security;
 alter table public.recommendations enable row level security;
 
 revoke select (pin_hash) on public.child_profiles from anon, authenticated;
 grant select (id, owner_id, name, grade, avatar, created_at) on public.child_profiles to authenticated;
+grant select on public.skills to authenticated;
+grant select on public.missions to authenticated;
+grant select, insert, update, delete on public.attempts to authenticated;
+grant select, insert, update, delete on public.mission_progress to authenticated;
+grant select, insert, update, delete on public.test_sessions to authenticated;
+grant select, insert, update, delete on public.recommendations to authenticated;
 
+drop policy if exists "profiles own row" on public.profiles;
 create policy "profiles own row" on public.profiles
   for all using ((select auth.uid()) = id)
   with check ((select auth.uid()) = id);
 
+drop policy if exists "children owned by current profile" on public.child_profiles;
 create policy "children owned by current profile" on public.child_profiles
   for all using ((select auth.uid()) = owner_id)
   with check ((select auth.uid()) = owner_id);
 
+drop policy if exists "skills readable by authenticated users" on public.skills;
 create policy "skills readable by authenticated users" on public.skills
   for select to authenticated using (true);
 
+drop policy if exists "missions readable by authenticated users" on public.missions;
+create policy "missions readable by authenticated users" on public.missions
+  for select to authenticated using (true);
+
+drop policy if exists "attempts for owned children" on public.attempts;
 create policy "attempts for owned children" on public.attempts
   for all using (
     exists (
@@ -98,6 +146,22 @@ create policy "attempts for owned children" on public.attempts
     )
   );
 
+drop policy if exists "mission progress for owned children" on public.mission_progress;
+create policy "mission progress for owned children" on public.mission_progress
+  for all using (
+    exists (
+      select 1 from public.child_profiles c
+      where c.id = mission_progress.child_id and c.owner_id = (select auth.uid())
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.child_profiles c
+      where c.id = mission_progress.child_id and c.owner_id = (select auth.uid())
+    )
+  );
+
+drop policy if exists "test sessions for owned children" on public.test_sessions;
 create policy "test sessions for owned children" on public.test_sessions
   for all using (
     exists (
@@ -112,6 +176,7 @@ create policy "test sessions for owned children" on public.test_sessions
     )
   );
 
+drop policy if exists "recommendations for owned children" on public.recommendations;
 create policy "recommendations for owned children" on public.recommendations
   for all using (
     exists (
@@ -205,6 +270,11 @@ $$;
 grant execute on function public.create_child_profile_with_pin(text, int, text, text) to authenticated;
 grant execute on function public.verify_child_pin(uuid, text) to authenticated;
 
+create index if not exists attempts_child_created_idx on public.attempts (child_id, created_at desc);
+create index if not exists attempts_child_module_idx on public.attempts (child_id, module_id);
+create index if not exists attempts_child_mission_idx on public.attempts (child_id, mission_id);
+create index if not exists mission_progress_child_activity_idx on public.mission_progress (child_id, last_activity_at desc);
+
 insert into public.skills (id, module_id, title, grade_min, grade_max, description) values
   ('addition', 'arithmetic', 'Plus und Minus sicher rechnen', 1, 6, 'Grundrechenarten und Kopfrechnen'),
   ('multiplication', 'arithmetic', 'Einmaleins und Division', 2, 6, 'Mal- und Geteiltaufgaben'),
@@ -221,3 +291,25 @@ on conflict (id) do update set
   grade_min = excluded.grade_min,
   grade_max = excluded.grade_max,
   description = excluded.description;
+
+insert into public.missions (id, module_id, title, description, badge, visual, grade_min, grade_max, target_count, sort_order) values
+  ('zahlenwelt', 'arithmetic', 'Zahlenwelt', 'Schnell und sicher mit Plus, Minus, Mal und Geteilt.', 'Zahlen-Profi', '4', 1, 6, 6, 1),
+  ('bruch-pizza', 'fractions', 'Bruch-Pizza', 'Teile erkennen, vergleichen und Bruchteile berechnen.', 'Bruch-Baecker', '1/2', 3, 8, 6, 2),
+  ('komma-werkstatt', 'decimals', 'Komma-Werkstatt', 'Dezimalzahlen lesen, runden und zusammenrechnen.', 'Komma-Meister', '0,5', 4, 8, 6, 3),
+  ('prozent-shop', 'percent', 'Prozent-Shop', 'Rabatte, Prozentwerte und Grundwerte im Alltag.', 'Rabatt-Profi', '%', 5, 10, 6, 4),
+  ('geometrie-labor', 'geometry', 'Geometrie-Labor', 'Formen, Umfang, Flaeche, Winkel und Koerper.', 'Formen-Forscher', '▭', 2, 10, 6, 5),
+  ('einheiten-reise', 'measures', 'Einheiten-Reise', 'Laengen, Zeiten, Geld, Gewicht und Volumen umwandeln.', 'Einheiten-Pilot', 'm', 2, 8, 6, 6),
+  ('detektiv-texte', 'word-problems', 'Textaufgaben-Detektiv', 'Wichtige Informationen finden und den Rechenweg waehlen.', 'Text-Detektiv', '?', 2, 8, 6, 7),
+  ('gleichungs-dojo', 'equations', 'Gleichungs-Dojo', 'Platzhalter und einfache Gleichungen sauber loesen.', 'Gleichungs-Ninja', 'x', 5, 10, 6, 8),
+  ('koordinaten-karte', 'coordinates', 'Koordinaten-Karte', 'Punkte lesen, Wege finden und Abstaende bestimmen.', 'Karten-Profi', '(x|y)', 5, 10, 6, 9),
+  ('statistik-studio', 'statistics', 'Statistik-Studio', 'Tabellen, Diagramme und Mittelwerte verstehen.', 'Daten-Profi', '▥', 4, 10, 6, 10)
+on conflict (id) do update set
+  module_id = excluded.module_id,
+  title = excluded.title,
+  description = excluded.description,
+  badge = excluded.badge,
+  visual = excluded.visual,
+  grade_min = excluded.grade_min,
+  grade_max = excluded.grade_max,
+  target_count = excluded.target_count,
+  sort_order = excluded.sort_order;
