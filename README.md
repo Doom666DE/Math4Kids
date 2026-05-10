@@ -25,17 +25,9 @@ Danach ist die App unter `http://localhost:5173` erreichbar. Ohne Supabase-Varia
 
 ## Online öffnen
 
-Wenn GitHub Pages für dieses Repository aktiviert ist:
+Die App ist über GitHub Pages erreichbar:
 
 https://doom666de.github.io/Math4Kids/
-
-Falls der Actions-Deploy nicht klappt, kann GitHub Pages auch ohne Build laufen:
-
-1. `Settings > Pages`
-2. Source: `Deploy from a branch`
-3. Branch: `Home`
-4. Folder: `/docs`
-5. Save
 
 ## Funktionen
 
