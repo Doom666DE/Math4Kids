@@ -7,13 +7,21 @@ braucht kein Backend.
 
 ## Starten
 
-Öffne `index.html` direkt im Browser oder starte lokal einen kleinen Server:
+Math4Kids ist jetzt als React/Vite-Lernplattform geplant und umgesetzt. Lokal:
 
 ```powershell
-python -m http.server 5173
+npm install
+npm run dev
 ```
 
-Danach ist die App unter `http://localhost:5173` erreichbar.
+Danach ist die App unter `http://localhost:5173` erreichbar. Ohne Supabase-Variablen läuft sie im Demo-Modus mit lokaler Browser-Speicherung.
+
+## Supabase einrichten
+
+1. Neues Supabase-Projekt erstellen.
+2. `supabase/schema.sql` im SQL Editor ausführen.
+3. `VITE_SUPABASE_URL` und `VITE_SUPABASE_ANON_KEY` als GitHub Actions Repository Variables setzen.
+4. Lokal optional `.env` aus `.env.example` erstellen.
 
 ## Online öffnen
 
@@ -23,8 +31,8 @@ https://doom666de.github.io/Math4Kids/
 
 ## Funktionen
 
-- Plus, Minus, Mal, Geteilt oder gemischte Aufgaben
-- Level: leicht, mittel, knifflig
-- Antwortprüfung mit Feedback
-- Punkte, Serie, Tagesziel und Belohnungen
-- Verlauf der letzten Aufgaben
+- Eltern/Lehrer-Login mit Supabase Auth oder Demo-Modus
+- Kinderprofile mit PIN
+- Module: Grundrechenarten, Brüche, Dezimalzahlen, Prozent, Geometrie, Maße, Textaufgaben, Gleichungen, Koordinaten, Statistik
+- Generator-Aufgaben und feste Diagnose-/Abschlusstests
+- Antwortprotokoll, Lernstand, Schwächen und Empfehlungen
