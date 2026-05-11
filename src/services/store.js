@@ -1,4 +1,5 @@
 import { getSupabaseClient, hasSupabaseConfig } from "./supabaseClient.js";
+import { learningModules } from "../modules/learningEngine.js";
 
 const STORAGE_KEY = "math4kids-demo-v1";
 
@@ -157,6 +158,7 @@ function createSupabaseStore() {
         .order("created_at", { ascending: false })
         .limit(500);
       if (filters.childId) query = query.eq("child_id", filters.childId);
+      if (filters.subjectId) query = query.eq("subject_id", filters.subjectId);
       if (filters.moduleId) query = query.eq("module_id", filters.moduleId);
       if (filters.result === "correct") query = query.eq("is_correct", true);
       if (filters.result === "wrong") query = query.eq("is_correct", false);
@@ -330,6 +332,7 @@ export function createDemoStore() {
       return state.attempts
         .filter((attempt) => childIds.has(attempt.child_id))
         .filter((attempt) => !filters.childId || attempt.child_id === filters.childId)
+        .filter((attempt) => !filters.subjectId || (attempt.subject_id ?? subjectForModuleId(attempt.module_id)) === filters.subjectId)
         .filter((attempt) => !filters.moduleId || attempt.module_id === filters.moduleId)
         .filter((attempt) => filters.result !== "correct" || attempt.is_correct)
         .filter((attempt) => filters.result !== "wrong" || !attempt.is_correct)
@@ -342,6 +345,10 @@ export function createDemoStore() {
         .map((attempt) => ({ ...attempt, child: childMap.get(attempt.child_id) ?? null }));
     },
   };
+}
+
+function subjectForModuleId(moduleId) {
+  return learningModules.find((module) => module.id === moduleId)?.subjectId ?? "math";
 }
 
 function dateRangeStart(dateRange) {

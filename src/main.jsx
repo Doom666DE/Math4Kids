@@ -23,6 +23,8 @@ import {
   Users,
 } from "lucide-react";
 import {
+  adaptiveSummary,
+  estimateTemplateCapacity,
   fixedTests,
   generateQuestion,
   getMissionProgress,
@@ -30,9 +32,12 @@ import {
   errorTypeLabel,
   learningModules,
   missions,
+  nextAdaptiveLevel,
   nextMissionProgress,
   starsForAttempt,
+  subjects,
   skillLabel,
+  subjectTitle,
   summarizeAttempts,
 } from "./modules/learningEngine.js";
 import { createMath4KidsStore } from "./services/store.js";
@@ -513,16 +518,26 @@ function PinDialog({ child, onClose, onConfirm }) {
 
 function LearningView({ activeChild, attempts, missionProgress, onAttempt, summary }) {
   const recommendedMissionId = summary.nextMission?.id ?? missions[0].id;
+  const recommendedSubjectId = missions.find((item) => item.id === recommendedMissionId)?.subjectId ?? "math";
+  const [subjectId, setSubjectId] = useState(recommendedSubjectId);
   const [missionId, setMissionId] = useState(recommendedMissionId);
 
   useEffect(() => {
     setMissionId(recommendedMissionId);
+    setSubjectId(recommendedSubjectId);
   }, [activeChild?.id]);
 
-  const activeMission = missions.find((item) => item.id === missionId) ?? missions[0];
+  const subjectMissions = missions.filter((item) => item.subjectId === subjectId);
+  const activeMission = subjectMissions.find((item) => item.id === missionId) ?? subjectMissions[0] ?? missions[0];
 
   if (!activeChild) {
     return <EmptyState title="Noch kein Kinderprofil" text="Lege ein Kind an, damit Missionen und Lernstand gespeichert werden können." />;
+  }
+
+  function selectSubject(nextSubjectId) {
+    const firstMission = missions.find((item) => item.subjectId === nextSubjectId) ?? missions[0];
+    setSubjectId(nextSubjectId);
+    setMissionId(firstMission.id);
   }
 
   return (
@@ -530,13 +545,17 @@ function LearningView({ activeChild, attempts, missionProgress, onAttempt, summa
       <div className="mission-map">
         <div className="panel-head">
           <div>
-            <p className="section-label">Missionen</p>
-            <h2>Alle Mathe-Welten</h2>
+            <p className="section-label">Fächer & Missionen</p>
+            <h2>{subjectTitle(subjectId)}-Welten</h2>
           </div>
           <Trophy size={24} />
         </div>
+        <SubjectPicker activeSubjectId={subjectId} onSelect={selectSubject} />
+        <p className="muted-line capacity-note">
+          Template-Engine: mehr als {estimateTemplateCapacity().toLocaleString("de-DE")} kombinierbare Aufgaben.
+        </p>
         <div className="mission-list">
-          {missions.map((mission) => (
+          {subjectMissions.map((mission) => (
             <MissionCard
               key={mission.id}
               mission={mission}
@@ -557,6 +576,24 @@ function LearningView({ activeChild, attempts, missionProgress, onAttempt, summa
 
       <ProgressAside attempts={attempts} summary={summary} missionProgress={missionProgress} />
     </section>
+  );
+}
+
+function SubjectPicker({ activeSubjectId, onSelect }) {
+  return (
+    <div className="subject-strip" aria-label="Fach auswählen">
+      {subjects.map((subject) => (
+        <button
+          key={subject.id}
+          className={subject.id === activeSubjectId ? "subject-chip active" : "subject-chip"}
+          type="button"
+          onClick={() => onSelect(subject.id)}
+        >
+          <span style={{ background: subject.color }}>{subject.visual}</span>
+          {subject.title}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -639,7 +676,11 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
     }));
     const savedProgress = await onAttempt({
       module_id: question.moduleId,
+      subject_id: question.subjectId,
+      topic_id: question.topicId,
       skill_id: question.skillId,
+      template_id: question.templateId,
+      answer_type: question.answerType,
       question_type: question.type,
       prompt: question.prompt,
       expected_answer: String(question.answer),
@@ -666,7 +707,7 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
     <section className="practice-panel mission-player">
       <div className="panel-head">
         <div>
-          <p className="section-label">{moduleTitle(mission.moduleId)}</p>
+          <p className="section-label">{subjectTitle(mission.subjectId)} · {moduleTitle(mission.moduleId)}</p>
           <h2>{mission.title}</h2>
         </div>
         <label className="small-select">
@@ -689,7 +730,7 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
           <Trophy size={42} />
           <h3>Mission abgeschlossen</h3>
           <p>Das kannst du schon: {mission.description}</p>
-          <p>Als Nächstes kannst du die Mission freiwillig wiederholen oder eine neue Mathe-Welt auswählen.</p>
+          <p>Als Nächstes kannst du die Mission freiwillig wiederholen oder eine neue Themenwelt auswählen.</p>
           <button className="primary-button" type="button" onClick={nextQuestion}>
             <Play size={18} />
             Weiter trainieren
@@ -754,26 +795,140 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
 }
 
 function TestsView({ activeChild, attempts, onAttempt }) {
+  const [mode, setMode] = useState("adaptive");
+  const [subjectId, setSubjectId] = useState("math");
   const [activeTestId, setActiveTestId] = useState("diagnose-klasse-5");
   const test = fixedTests.find((item) => item.id === activeTestId);
   return (
     <section className="two-column">
       <div className="panel">
         <p className="section-label">Tests</p>
-        <h2>Diagnose- und Abschlusstests</h2>
+        <h2>Adaptive Checks & feste Tests</h2>
+        <div className="segment-control mode-switch">
+          <button type="button" className={mode === "adaptive" ? "active" : ""} onClick={() => setMode("adaptive")}>Adaptiv</button>
+          <button type="button" className={mode === "fixed" ? "active" : ""} onClick={() => setMode("fixed")}>Fest</button>
+        </div>
+        {mode === "adaptive" && <SubjectPicker activeSubjectId={subjectId} onSelect={setSubjectId} />}
         <div className="test-list">
-          {fixedTests.map((item) => (
-            <button key={item.id} className={item.id === activeTestId ? "test-item active" : "test-item"} onClick={() => setActiveTestId(item.id)}>
+          {mode === "adaptive" ? (
+            <div className="test-item active">
               <ClipboardList size={20} />
               <span>
-                <strong>{item.title}</strong>
-                <small>{item.questions.length} Aufgaben · Klasse {item.gradeRange}</small>
+                <strong>Adaptiver {subjectTitle(subjectId)}-Check</strong>
+                <small>6 Aufgaben · Schwierigkeit passt sich automatisch an</small>
               </span>
-            </button>
-          ))}
+            </div>
+          ) : (
+            fixedTests.map((item) => (
+              <button key={item.id} className={item.id === activeTestId ? "test-item active" : "test-item"} onClick={() => setActiveTestId(item.id)}>
+                <ClipboardList size={20} />
+                <span>
+                  <strong>{item.title}</strong>
+                  <small>{item.questions.length} Aufgaben · Klasse {item.gradeRange}</small>
+                </span>
+              </button>
+            ))
+          )}
         </div>
       </div>
-      <TestRunner activeChild={activeChild} test={test} onAttempt={onAttempt} attempts={attempts} />
+      {mode === "adaptive" ? (
+        <AdaptiveTestRunner activeChild={activeChild} subjectId={subjectId} onAttempt={onAttempt} />
+      ) : (
+        <TestRunner activeChild={activeChild} test={test} onAttempt={onAttempt} attempts={attempts} />
+      )}
+    </section>
+  );
+}
+
+function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
+  const initialLevel = Math.max(1, Math.min(10, activeChild?.grade ?? 3));
+  const [level, setLevel] = useState(initialLevel);
+  const [question, setQuestion] = useState(() => generateQuestion({ subjectId, grade: activeChild?.grade ?? 3, level: initialLevel }));
+  const [answer, setAnswer] = useState("");
+  const [results, setResults] = useState([]);
+  const [startedAt, setStartedAt] = useState(Date.now());
+
+  useEffect(() => {
+    const nextLevel = Math.max(1, Math.min(10, activeChild?.grade ?? 3));
+    setLevel(nextLevel);
+    setQuestion(generateQuestion({ subjectId, grade: activeChild?.grade ?? 3, level: nextLevel }));
+    setAnswer("");
+    setResults([]);
+    setStartedAt(Date.now());
+  }, [activeChild?.id, activeChild?.grade, subjectId]);
+
+  if (!activeChild) {
+    return <EmptyState title="Kein Profil ausgewählt" text="Wähle ein Kind aus, um adaptive Tests zu starten." />;
+  }
+
+  const finished = results.length >= 6;
+  const summary = adaptiveSummary(results);
+
+  async function saveAnswer() {
+    if (!answer.trim() || finished) return;
+    const result = gradeAnswer(question, answer);
+    const nextLevel = nextAdaptiveLevel(level, result.correct);
+    await onAttempt({
+      module_id: question.moduleId,
+      subject_id: question.subjectId,
+      topic_id: question.topicId,
+      skill_id: question.skillId,
+      template_id: question.templateId,
+      answer_type: question.answerType,
+      question_type: "adaptive-test",
+      prompt: question.prompt,
+      expected_answer: String(question.answer),
+      given_answer: answer,
+      is_correct: result.correct,
+      duration_ms: Date.now() - startedAt,
+      error_type: result.correct ? null : question.errorType,
+      explanation: question.explanation,
+      grade_level: String(activeChild.grade),
+      test_id: `adaptive-${subjectId}`,
+      mission_id: question.missionId,
+      level,
+      hint_count: 0,
+      stars_awarded: result.correct ? 1 : 0,
+    });
+    const nextResults = [...results, { correct: result.correct, level, moduleId: question.moduleId, skillId: question.skillId }];
+    setResults(nextResults);
+    setAnswer("");
+    setLevel(nextLevel);
+    setQuestion(generateQuestion({ subjectId, grade: activeChild.grade, level: nextLevel }));
+    setStartedAt(Date.now());
+  }
+
+  function submit(event) {
+    event.preventDefault();
+    saveAnswer();
+  }
+
+  return (
+    <section className="panel test-runner">
+      <p className="section-label">Adaptiver Check · {subjectTitle(subjectId)}</p>
+      <h2>{finished ? "Check abgeschlossen" : `Aufgabe ${results.length + 1} von 6 · Level ${level}`}</h2>
+      {finished ? (
+        <div className="score-result">
+          <strong>{summary.accuracy}%</strong>
+          <span>{summary.correct}/{summary.total} richtig · {summary.status}</span>
+          <button className="primary-button" type="button" onClick={() => {
+            setLevel(initialLevel);
+            setResults([]);
+            setQuestion(generateQuestion({ subjectId, grade: activeChild.grade, level: initialLevel }));
+            setStartedAt(Date.now());
+          }}>Check neu starten</button>
+        </div>
+      ) : (
+        <form className="exercise-card" onSubmit={submit}>
+          <div className="question-visual">{question.visual}</div>
+          <p className="question-prompt">{question.prompt}</p>
+          <label>
+            Antwort
+            <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
+          </label>
+          <button className="primary-button" type="button" onClick={saveAnswer} disabled={!answer.trim()}>Antwort speichern</button>
+        </form>
+      )}
     </section>
   );
 }
@@ -795,7 +950,11 @@ function TestRunner({ activeChild, test, onAttempt }) {
     const result = gradeAnswer(question, answer);
     const attempt = {
       module_id: question.moduleId,
+      subject_id: question.subjectId,
+      topic_id: question.topicId,
       skill_id: question.skillId,
+      template_id: question.templateId,
+      answer_type: question.answerType,
       question_type: "fixed-test",
       prompt: question.prompt,
       expected_answer: String(question.answer),
@@ -882,7 +1041,7 @@ function ChildrenView({ children, activeChild, onCreateChild, onSelectChild }) {
 }
 
 function ClassesView({ classRooms, activeClass, classChildren, classAttempts, classAttemptOptions, children, onCreateClassRoom, onAssignChildToClass, onSelectClass }) {
-  const [filters, setFilters] = useState({ childId: "", moduleId: "", result: "", errorType: "", dateRange: "" });
+  const [filters, setFilters] = useState({ childId: "", subjectId: "", moduleId: "", result: "", errorType: "", dateRange: "" });
   const [childToAssign, setChildToAssign] = useState("");
   const classSummary = summarizeAttempts(classAttempts);
   const assignableChildren = children.filter((child) => !classChildren.some((classChild) => classChild.id === child.id));
@@ -1024,7 +1183,11 @@ function ClassRoomForm({ onCreateClassRoom }) {
 function ClassAttemptFilters({ filters, children, attempts, onChange }) {
   const errorTypes = [...new Set(attempts.map((attempt) => attempt.error_type).filter(Boolean))].sort();
   function next(key, value) {
-    onChange({ ...filters, [key]: value });
+    const nextFilters = { ...filters, [key]: value };
+    if (key === "subjectId") {
+      nextFilters.moduleId = "";
+    }
+    onChange(nextFilters);
   }
   return (
     <div className="filter-grid">
@@ -1036,10 +1199,19 @@ function ClassAttemptFilters({ filters, children, attempts, onChange }) {
         </select>
       </label>
       <label>
+        Fach
+        <select value={filters.subjectId} onChange={(event) => next("subjectId", event.target.value)}>
+          <option value="">Alle</option>
+          {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.title}</option>)}
+        </select>
+      </label>
+      <label>
         Thema
         <select value={filters.moduleId} onChange={(event) => next("moduleId", event.target.value)}>
           <option value="">Alle</option>
-          {learningModules.map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
+          {learningModules
+            .filter((module) => !filters.subjectId || module.subjectId === filters.subjectId)
+            .map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
         </select>
       </label>
       <label>
@@ -1071,40 +1243,55 @@ function ClassAttemptFilters({ filters, children, attempts, onChange }) {
 }
 
 function AdultDashboard({ activeChild, attempts, missionProgress, summary }) {
+  const [subjectFilter, setSubjectFilter] = useState("");
   if (!activeChild) {
     return <EmptyState title="Kein Lernstand verfügbar" text="Lege ein Kinderprofil an und löse Aufgaben, um Empfehlungen zu sehen." />;
   }
+  const filteredAttempts = subjectFilter
+    ? attempts.filter((attempt) => (attempt.subject_id ?? subjectForModuleId(attempt.module_id)) === subjectFilter)
+    : attempts;
+  const filteredProgress = subjectFilter
+    ? missionProgress.filter((progress) => missions.find((mission) => mission.id === progress.mission_id)?.subjectId === subjectFilter)
+    : missionProgress;
+  const dashboardSummary = subjectFilter ? summarizeAttempts(filteredAttempts, filteredProgress) : summary;
   return (
     <section className="dashboard-grid">
       <div className="panel hero-panel">
         <p className="section-label">Lernstand</p>
         <h2>{activeChild.name}: Klasse {activeChild.grade}</h2>
+        <label className="small-select dashboard-filter">
+          Fachfilter
+          <select value={subjectFilter} onChange={(event) => setSubjectFilter(event.target.value)}>
+            <option value="">Alle Fächer</option>
+            {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.title}</option>)}
+          </select>
+        </label>
         <div className="metric-row">
-          <Metric label="Antworten" value={summary.total} />
-          <Metric label="Richtig" value={`${summary.accuracy}%`} />
-          <Metric label="Missionen fertig" value={`${summary.missionStats.completed}/${summary.missionStats.total}`} />
-          <Metric label="Sterne" value={summary.missionStats.stars} />
+          <Metric label="Antworten" value={dashboardSummary.total} />
+          <Metric label="Richtig" value={`${dashboardSummary.accuracy}%`} />
+          <Metric label="Missionen fertig" value={`${dashboardSummary.missionStats.completed}/${dashboardSummary.missionStats.total}`} />
+          <Metric label="Sterne" value={dashboardSummary.missionStats.stars} />
         </div>
       </div>
       <div className="panel">
         <p className="section-label">Empfehlungen</p>
         <h2>Als Nächstes üben</h2>
-        <RecommendationList summary={summary} />
+        <RecommendationList summary={dashboardSummary} />
       </div>
       <div className="panel">
         <p className="section-label">Fehlerarten</p>
         <h2>Woran es hakt</h2>
-        <ErrorTypeList summary={summary} />
+        <ErrorTypeList summary={dashboardSummary} />
       </div>
       <div className="panel">
         <p className="section-label">Missionen</p>
         <h2>Fortschritt</h2>
-        <MissionProgressList progressItems={missionProgress} />
+        <MissionProgressList progressItems={filteredProgress} subjectId={subjectFilter} />
       </div>
       <div className="panel wide">
         <p className="section-label">Antwortprotokoll</p>
         <h2>Letzte Versuche</h2>
-        <AttemptTable attempts={attempts} />
+        <AttemptTable attempts={filteredAttempts} />
       </div>
     </section>
   );
@@ -1158,11 +1345,13 @@ function ErrorTypeList({ summary }) {
   );
 }
 
-function MissionProgressList({ progressItems, compact = false }) {
-  const rows = useMemo(() => missions.map((mission) => ({
+function MissionProgressList({ progressItems, compact = false, subjectId = "" }) {
+  const rows = useMemo(() => missions
+    .filter((mission) => !subjectId || mission.subjectId === subjectId)
+    .map((mission) => ({
     mission,
     progress: getMissionProgress(progressItems, mission.id),
-  })), [progressItems]);
+  })), [progressItems, subjectId]);
   return (
     <div className={compact ? "mission-progress-list compact" : "mission-progress-list"}>
       {rows.map(({ mission, progress }) => {
@@ -1191,6 +1380,7 @@ function AttemptTable({ attempts, compact = false, detailed = false, showChild =
         {detailed && (
           <div className="attempt-row header">
             {showChild && <span>Kind</span>}
+            <span>Fach</span>
             <span>Aufgabe</span>
             <span>Eingabe</span>
             <span>Lösung</span>
@@ -1211,6 +1401,7 @@ function AttemptTable({ attempts, compact = false, detailed = false, showChild =
             {detailed ? (
               <>
                 {showChild && <span>{attempt.child?.name ?? "Kind"}</span>}
+                <span>{subjectTitle(attempt.subject_id ?? subjectForModuleId(attempt.module_id))}</span>
                 <span>{attempt.prompt}</span>
                 <span>{attempt.given_answer || "-"}</span>
                 <span>{attempt.expected_answer}</span>
@@ -1222,7 +1413,7 @@ function AttemptTable({ attempts, compact = false, detailed = false, showChild =
               </>
             ) : (
               <>
-                <span>{moduleTitle(attempt.module_id)}</span>
+                <span>{subjectTitle(attempt.subject_id ?? subjectForModuleId(attempt.module_id))}</span>
                 {!compact && <span>{attempt.prompt}</span>}
                 {!compact && <span>{attempt.error_type ? errorTypeLabel(attempt.error_type) : "keine"}</span>}
                 <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "üben"}</strong>
@@ -1253,6 +1444,7 @@ function AttemptDetailDialog({ attempt, onClose }) {
           <div><dt>Eingabe</dt><dd>{attempt.given_answer || "-"}</dd></div>
           <div><dt>Richtige Lösung</dt><dd>{attempt.expected_answer}</dd></div>
           <div><dt>Ergebnis</dt><dd className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "falsch"}</dd></div>
+          <div><dt>Fach</dt><dd>{subjectTitle(attempt.subject_id ?? subjectForModuleId(attempt.module_id))}</dd></div>
           <div><dt>Mission</dt><dd>{missionTitle(attempt.mission_id)}</dd></div>
           <div><dt>Modul / Kompetenz</dt><dd>{moduleTitle(attempt.module_id)} · {skillLabel(attempt.skill_id)}</dd></div>
           <div><dt>Level</dt><dd>{attempt.level ?? attempt.grade_level ?? "-"}</dd></div>
@@ -1292,6 +1484,10 @@ function EmptyState({ title, text }) {
 
 function moduleTitle(moduleId) {
   return learningModules.find((item) => item.id === moduleId)?.title ?? moduleId;
+}
+
+function subjectForModuleId(moduleId) {
+  return learningModules.find((item) => item.id === moduleId)?.subjectId ?? "math";
 }
 
 function missionTitle(missionId) {

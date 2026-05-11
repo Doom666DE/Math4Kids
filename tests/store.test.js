@@ -33,7 +33,11 @@ test("demo store supports teacher classes and detailed class attempts", async ()
 
   await store.recordAttempt(child.id, {
     module_id: "geometry",
+    subject_id: "math",
+    topic_id: "math-geometry",
     skill_id: "area",
+    template_id: "tpl-area-flex",
+    answer_type: "unit",
     question_type: "generated",
     prompt: "Ein Rechteck ist 8 cm lang und 5 cm breit. Berechne die Fläche.",
     expected_answer: "40",
@@ -51,7 +55,11 @@ test("demo store supports teacher classes and detailed class attempts", async ()
 
   await store.recordAttempt(child.id, {
     module_id: "statistics",
+    subject_id: "math",
+    topic_id: "math-data",
     skill_id: "mean",
+    template_id: "tpl-mean-flex",
+    answer_type: "decimal",
     question_type: "generated",
     prompt: "Berechne den Mittelwert von 4, 8, 10, 14.",
     expected_answer: "9",
@@ -82,4 +90,7 @@ test("demo store supports teacher classes and detailed class attempts", async ()
   const recentAttempts = await store.listClassAttempts(classRoom.id, { dateRange: "30d" });
   assert.equal(recentAttempts.length, 1);
   assert.equal(recentAttempts[0].module_id, "geometry");
+
+  const mathAttempts = await store.listClassAttempts(classRoom.id, { subjectId: "math" });
+  assert.equal(mathAttempts.length, 2);
 });

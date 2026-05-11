@@ -129,6 +129,57 @@ button {
   margin-top: 28px;
 }
 
+.subject-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.subject-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: #31506b;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.subject-chip span {
+  display: grid;
+  min-width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.78rem;
+}
+
+.subject-chip.active,
+.subject-chip:hover {
+  border-color: var(--teal);
+  background: #eefaf8;
+  color: var(--teal-dark);
+}
+
+.capacity-note {
+  margin-top: 12px;
+}
+
+.mode-switch {
+  margin-top: 14px;
+}
+
+.dashboard-filter {
+  max-width: 260px;
+  margin-top: 14px;
+}
+
 .feature-strip span {
   padding: 10px 14px;
   border-radius: 999px;
@@ -706,8 +757,8 @@ select:focus {
 }
 
 .attempt-table.detailed .attempt-row {
-  grid-template-columns: minmax(110px, 0.8fr) minmax(260px, 2fr) minmax(110px, 0.8fr) minmax(110px, 0.8fr) 70px 90px minmax(110px, 0.8fr) 130px 80px;
-  min-width: 1080px;
+  grid-template-columns: minmax(110px, 0.8fr) minmax(120px, 0.8fr) minmax(260px, 2fr) minmax(110px, 0.8fr) minmax(110px, 0.8fr) 70px 90px minmax(110px, 0.8fr) 130px 80px;
+  min-width: 1200px;
 }
 
 .attempt-table.detailed .attempt-row:not(.header):hover {

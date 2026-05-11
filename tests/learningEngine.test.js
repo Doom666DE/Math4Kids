@@ -1,19 +1,34 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  adaptiveSummary,
+  estimateTemplateCapacity,
   fixedTests,
   generateQuestion,
   gradeAnswer,
   errorTypeLabel,
   learningModules,
   missions,
+  nextAdaptiveLevel,
   nextMissionProgress,
   starsForAttempt,
   skillLabel,
+  subjects,
   summarizeAttempts,
+  taskTemplates,
+  validateGeneratedQuestion,
 } from "../src/modules/learningEngine.js";
 
-test("covers the planned school modules", () => {
+test("covers the planned school subjects and modules", () => {
+  assert.deepEqual(subjects.map((subject) => subject.id), [
+    "math",
+    "german",
+    "english",
+    "science",
+    "history",
+    "geography",
+    "computer-science",
+  ]);
   const ids = learningModules.map((module) => module.id);
   assert.deepEqual(ids, [
     "arithmetic",
@@ -26,6 +41,12 @@ test("covers the planned school modules", () => {
     "equations",
     "coordinates",
     "statistics",
+    "german-language",
+    "english-basics",
+    "science-world",
+    "history-time",
+    "geography-map",
+    "coding-logic",
   ]);
 });
 
@@ -34,10 +55,26 @@ test("generates valid questions for every module and grade band", () => {
     for (const grade of [2, 5, 9]) {
       const question = generateQuestion({ moduleId: module.id, grade });
       assert.equal(question.moduleId, module.id);
+      assert.equal(question.subjectId, module.subjectId);
       assert.ok(question.prompt.length > 5);
       assert.notEqual(question.answer, undefined);
       assert.ok(question.hintSteps.length >= 3);
       assert.ok(question.errorType.length > 2);
+      assert.ok(validateGeneratedQuestion(question));
+      assert.equal(gradeAnswer(question, String(question.answer)).correct, true);
+    }
+  }
+});
+
+test("task templates generate many valid questions per template", () => {
+  assert.ok(taskTemplates.length >= 16);
+  assert.ok(estimateTemplateCapacity() > 1000000000);
+  for (const template of taskTemplates) {
+    for (let index = 0; index < 100; index += 1) {
+      const grade = Math.max(template.gradeMin, Math.min(template.gradeMax, 5));
+      const question = generateQuestion({ moduleId: template.moduleId, templateId: template.id, grade, level: grade });
+      assert.equal(question.templateId, template.id);
+      assert.equal(validateGeneratedQuestion(question), true);
       assert.equal(gradeAnswer(question, String(question.answer)).correct, true);
     }
   }
@@ -77,6 +114,23 @@ test("calculates stars and mission progress", () => {
   assert.equal(second.correct_count, 2);
   assert.equal(second.stars, 5);
   assert.equal(second.completed, true);
+});
+
+test("adaptive tests adjust difficulty and summarize results", () => {
+  assert.equal(nextAdaptiveLevel(5, true), 6);
+  assert.equal(nextAdaptiveLevel(5, false), 4);
+  assert.equal(nextAdaptiveLevel(10, true), 10);
+  assert.equal(nextAdaptiveLevel(1, false), 1);
+
+  const summary = adaptiveSummary([
+    { correct: true, level: 5 },
+    { correct: true, level: 6 },
+    { correct: false, level: 7 },
+  ]);
+  assert.equal(summary.total, 3);
+  assert.equal(summary.correct, 2);
+  assert.equal(summary.accuracy, 67);
+  assert.equal(summary.status, "weiter üben");
 });
 
 test("fixed tests include broad diagnosis coverage", () => {

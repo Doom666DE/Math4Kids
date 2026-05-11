@@ -1,63 +1,125 @@
+export const subjects = [
+  subject("math", "Mathe", "Zahlen, Formen, Daten und Problemlösen.", "4", "#18a999", 1, 10, 1),
+  subject("german", "Deutsch", "Lesen, Schreiben, Grammatik und Sprache.", "Aa", "#ff7568", 1, 10, 2),
+  subject("english", "Englisch", "Wortschatz, Sätze, Lesen und Übersetzen.", "EN", "#4d96ff", 1, 10, 3),
+  subject("science", "Sachkunde/Naturwissen", "Natur, Körper, Wetter, Energie und Experimente.", "⚗", "#68bd7d", 1, 10, 4),
+  subject("history", "Geschichte", "Zeit, Quellen, Epochen und Ereignisse.", "⌛", "#b47dff", 5, 10, 5),
+  subject("geography", "Geografie", "Karten, Länder, Klima, Maßstab und Orientierung.", "⌖", "#f5a623", 3, 10, 6),
+  subject("computer-science", "Informatik", "Muster, Logik, Daten und Algorithmen.", "01", "#5468ff", 3, 10, 7),
+];
+
 export const learningModules = [
   {
     id: "arithmetic",
+    subjectId: "math",
     iconKey: "brain",
     title: "Grundrechenarten",
     skills: ["Plus/Minus", "Mal/Geteilt", "Kopfrechnen", "Reihen"],
   },
   {
     id: "fractions",
+    subjectId: "math",
     iconKey: "book",
     title: "Brüche",
     skills: ["Bruchteile", "Erweitern/Kürzen", "Brüche vergleichen"],
   },
   {
     id: "decimals",
+    subjectId: "math",
     iconKey: "bar",
     title: "Dezimalzahlen",
     skills: ["Stellenwerte", "Runden", "Rechnen mit Kommazahlen"],
   },
   {
     id: "percent",
+    subjectId: "math",
     iconKey: "target",
     title: "Prozent",
     skills: ["Prozentwert", "Grundwert", "Rabatte"],
   },
   {
     id: "geometry",
+    subjectId: "math",
     iconKey: "shapes",
     title: "Geometrie",
     skills: ["Formen", "Umfang", "Fläche", "Winkel", "Körper"],
   },
   {
     id: "measures",
+    subjectId: "math",
     iconKey: "ruler",
     title: "Maßeinheiten",
     skills: ["Länge", "Gewicht", "Zeit", "Geld", "Volumen"],
   },
   {
     id: "word-problems",
+    subjectId: "math",
     iconKey: "book",
     title: "Textaufgaben",
     skills: ["Informationen erkennen", "Rechenweg wählen", "Antwortsatz"],
   },
   {
     id: "equations",
+    subjectId: "math",
     iconKey: "brain",
     title: "Gleichungen",
     skills: ["Platzhalter", "Umformen", "Probe"],
   },
   {
     id: "coordinates",
+    subjectId: "math",
     iconKey: "bar",
     title: "Koordinaten",
     skills: ["Punkte lesen", "Punkte eintragen", "Abstände"],
   },
   {
     id: "statistics",
+    subjectId: "math",
     iconKey: "bar",
     title: "Statistik",
     skills: ["Tabellen", "Diagramme", "Mittelwert"],
+  },
+  {
+    id: "german-language",
+    subjectId: "german",
+    iconKey: "book",
+    title: "Deutsch-Grundlagen",
+    skills: ["Rechtschreibung", "Wortarten", "Satzglieder", "Leseverständnis"],
+  },
+  {
+    id: "english-basics",
+    subjectId: "english",
+    iconKey: "book",
+    title: "Englisch-Basics",
+    skills: ["Vokabeln", "Satzbau", "Übersetzen", "Leseverständnis"],
+  },
+  {
+    id: "science-world",
+    subjectId: "science",
+    iconKey: "target",
+    title: "Naturwissen",
+    skills: ["Körper", "Tiere/Pflanzen", "Wetter", "Energie"],
+  },
+  {
+    id: "history-time",
+    subjectId: "history",
+    iconKey: "bar",
+    title: "Geschichte",
+    skills: ["Zeitstrahl", "Quellen", "Epochen", "Begriffe"],
+  },
+  {
+    id: "geography-map",
+    subjectId: "geography",
+    iconKey: "ruler",
+    title: "Geografie",
+    skills: ["Karten", "Länder", "Klima", "Maßstab"],
+  },
+  {
+    id: "coding-logic",
+    subjectId: "computer-science",
+    iconKey: "brain",
+    title: "Informatik-Grundlagen",
+    skills: ["Muster", "Logik", "Algorithmen", "Daten"],
   },
 ];
 
@@ -72,6 +134,12 @@ export const missions = [
   mission("gleichungs-dojo", "equations", "Gleichungs-Dojo", "Platzhalter und einfache Gleichungen sauber lösen.", "Gleichungs-Ninja", "x", 5, 10, 8),
   mission("koordinaten-karte", "coordinates", "Koordinaten-Karte", "Punkte lesen, Wege finden und Abstände bestimmen.", "Karten-Profi", "(x|y)", 5, 10, 9),
   mission("statistik-studio", "statistics", "Statistik-Studio", "Tabellen, Diagramme und Mittelwerte verstehen.", "Daten-Profi", "▥", 4, 10, 10),
+  mission("wort-werkstatt", "german-language", "Wort-Werkstatt", "Wortarten, Rechtschreibung, Satzglieder und Lesen.", "Sprach-Profi", "Aa", 1, 10, 11),
+  mission("english-quest", "english-basics", "English Quest", "Vokabeln, einfache Sätze und kurze Texte verstehen.", "Word Hero", "EN", 1, 10, 12),
+  mission("natur-labor", "science-world", "Natur-Labor", "Körper, Pflanzen, Wetter, Energie und Experimente verstehen.", "Natur-Profi", "⚗", 1, 10, 13),
+  mission("zeitreise", "history-time", "Zeitreise", "Epochen, Quellen und Ereignisse in Reihenfolge bringen.", "Zeit-Profi", "⌛", 5, 10, 14),
+  mission("karten-kompass", "geography-map", "Karten-Kompass", "Karten, Länder, Himmelsrichtungen und Maßstab üben.", "Karten-Profi", "⌖", 3, 10, 15),
+  mission("code-knacker", "coding-logic", "Code-Knacker", "Muster, Logik, Daten und Algorithmen verstehen.", "Logik-Profi", "01", 3, 10, 16),
 ];
 
 export const skillLabels = {
@@ -108,6 +176,28 @@ export const skillLabels = {
   "table-sum": "Tabellensumme",
   range: "Spannweite",
   mean: "Mittelwert",
+  spelling: "Rechtschreibung",
+  "parts-of-speech": "Wortarten",
+  "sentence-parts": "Satzglieder",
+  "reading-main-idea": "Leseverständnis",
+  vocabulary: "Vokabeln",
+  translation: "Übersetzen",
+  "sentence-order": "Satzbau",
+  "body-systems": "Körperwissen",
+  "plants-animals": "Tiere und Pflanzen",
+  weather: "Wetter",
+  energy: "Energie",
+  timeline: "Zeitstrahl",
+  sources: "Quellen",
+  eras: "Epochen",
+  maps: "Karten lesen",
+  countries: "Länderwissen",
+  compass: "Himmelsrichtungen",
+  scale: "Maßstab",
+  patterns: "Muster",
+  logic: "Logik",
+  algorithms: "Algorithmen",
+  binary: "Binärzahlen",
 };
 
 export const errorTypeLabels = {
@@ -138,6 +228,15 @@ export const errorTypeLabels = {
   mean: "Mittelwert",
   "distance-axis": "Abstand auf Achse",
   discount: "Rabatt berechnen",
+  spelling: "Rechtschreibung",
+  grammar: "Grammatik",
+  reading: "Leseverständnis",
+  vocabulary: "Wortschatz",
+  translation: "Übersetzen",
+  science: "Naturwissen",
+  timeline: "Zeitstrahl",
+  geography: "Geografie",
+  logic: "Logik",
 };
 
 export function skillLabel(skillId) {
@@ -147,6 +246,102 @@ export function skillLabel(skillId) {
 export function errorTypeLabel(errorType) {
   return errorTypeLabels[errorType] ?? skillLabel(errorType) ?? errorType ?? "keine";
 }
+
+export const topics = [
+  topic("math-arithmetic", "math", "arithmetic", "Zahlen & Rechnen", 1, 6),
+  topic("math-geometry", "math", "geometry", "Geometrie & Messen", 2, 10),
+  topic("math-data", "math", "statistics", "Daten & Diagramme", 4, 10),
+  topic("de-language", "german", "german-language", "Sprache untersuchen", 1, 10),
+  topic("en-basics", "english", "english-basics", "Englisch verstehen", 1, 10),
+  topic("science-basics", "science", "science-world", "Natur erforschen", 1, 10),
+  topic("history-basics", "history", "history-time", "Zeit verstehen", 5, 10),
+  topic("geo-basics", "geography", "geography-map", "Räume verstehen", 3, 10),
+  topic("cs-basics", "computer-science", "coding-logic", "Logisch denken", 3, 10),
+];
+
+export const taskTemplates = [
+  template("tpl-addition-flex", "math", "arithmetic", "math-arithmetic", "addition", "Zahlen addieren", "number", 1, 10, "✦", "Rechenfehler", ({ grade }) => {
+    const max = grade <= 2 ? 20 : grade <= 4 ? 100 : 1000;
+    const a = randomInt(2, max);
+    const b = randomInt(2, Math.min(max, 150));
+    return task(`${a} + ${b} = ?`, a + b, [`Zerlege ${a} und ${b}.`, "Addiere erst die größeren Stellen.", `${a} + ${b} = ${a + b}.`]);
+  }),
+  template("tpl-fraction-of-flex", "math", "fractions", "math-arithmetic", "fraction-of", "Bruchteil berechnen", "number", 3, 10, "1/2", "Bruchteil", ({ grade }) => {
+    const denominator = randomPick([2, 3, 4, 5, 8, 10]);
+    const whole = denominator * randomInt(2, grade <= 5 ? 8 : 14);
+    const numerator = randomInt(1, denominator - 1);
+    const answer = (whole / denominator) * numerator;
+    return task(`Wie viel ist ${numerator}/${denominator} von ${whole}?`, answer, [`Teile ${whole} durch ${denominator}.`, `Ein Teil ist ${whole / denominator}; nimm ${numerator} Teile.`, `${numerator}/${denominator} von ${whole} ist ${answer}.`]);
+  }),
+  template("tpl-area-flex", "math", "geometry", "math-geometry", "area", "Fläche berechnen", "unit", 4, 10, "▭", "Formelwahl", ({ grade }) => {
+    const length = randomInt(4, grade <= 5 ? 12 : 24);
+    const width = randomInt(3, grade <= 5 ? 10 : 18);
+    const answer = length * width;
+    return task(`Ein Rechteck ist ${length} cm lang und ${width} cm breit. Berechne die Fläche.`, answer, ["Fläche Rechteck = Länge mal Breite.", `Rechne ${length} mal ${width}.`, `Die Fläche ist ${answer} cm².`], [`${answer} cm²`, `${answer} cm2`]);
+  }),
+  template("tpl-mean-flex", "math", "statistics", "math-data", "mean", "Mittelwert berechnen", "decimal", 5, 10, "▥", "Mittelwert", () => {
+    const values = [randomInt(2, 20), randomInt(2, 20), randomInt(2, 20), randomInt(2, 20)];
+    const answer = roundTo(values.reduce((sum, value) => sum + value, 0) / values.length, 2);
+    return task(`Berechne den Mittelwert von ${values.join(", ")}.`, answer, ["Addiere alle Werte.", `Teile die Summe durch ${values.length}.`, `Der Mittelwert ist ${formatDecimal(answer)}.`], [formatDecimal(answer)]);
+  }),
+  template("tpl-german-word-type", "german", "german-language", "de-language", "parts-of-speech", "Wortarten bestimmen", "multiple-choice", 1, 10, "Aa", "grammar", () => {
+    const item = randomPick([
+      ["laufen", "Verb", "Tunwort"],
+      ["schnell", "Adjektiv", "Wiewort"],
+      ["Haus", "Nomen", "Namenwort"],
+      ["unter", "Präposition", "Verhältniswort"],
+    ]);
+    return task(`Welche Wortart hat "${item[0]}"?`, item[1], [`Frage dich, was das Wort leistet.`, `${item[0]} ist ein ${item[2]}.`, `Die richtige Wortart ist ${item[1]}.`], [item[2]]);
+  }),
+  template("tpl-german-spelling", "german", "german-language", "de-language", "spelling", "Rechtschreibung", "text", 1, 10, "Aa", "spelling", () => {
+    const item = randomPick([["Fahrrad", "Fahrad"], ["nämlich", "nemlich"], ["Rhythmus", "Rythmus"], ["Schlüssel", "Schlüsel"]]);
+    return task(`Welches Wort ist richtig geschrieben: ${item[0]} oder ${item[1]}?`, item[0], ["Lies beide Wörter langsam.", "Achte auf doppelte Buchstaben und Merkwörter.", `Richtig ist: ${item[0]}.`]);
+  }),
+  template("tpl-english-vocabulary", "english", "english-basics", "en-basics", "vocabulary", "Vokabeln", "text", 1, 10, "EN", "vocabulary", () => {
+    const item = randomPick([["Hund", "dog"], ["Katze", "cat"], ["Apfel", "apple"], ["Schule", "school"], ["Wasser", "water"], ["Freund", "friend"]]);
+    return task(`Wie heißt "${item[0]}" auf Englisch?`, item[1], ["Denke an bekannte Alltagswörter.", `Das deutsche Wort ist ${item[0]}.`, `${item[0]} heißt auf Englisch ${item[1]}.`]);
+  }),
+  template("tpl-english-sentence-order", "english", "english-basics", "en-basics", "sentence-order", "Satzbau", "text", 3, 10, "EN", "translation", () => {
+    const item = randomPick([["I like apples.", "Ich mag Äpfel."], ["She plays football.", "Sie spielt Fußball."], ["We are friends.", "Wir sind Freunde."]]);
+    return task(`Übersetze: ${item[1]}`, item[0], ["Beginne mit dem Subjekt.", "Im Englischen folgt danach meist das Verb.", `Eine passende Übersetzung ist: ${item[0]}`]);
+  }),
+  template("tpl-science-body", "science", "science-world", "science-basics", "body-systems", "Körperwissen", "text", 1, 10, "⚗", "science", () => {
+    const item = randomPick([["Welches Organ pumpt Blut durch den Körper?", "Herz"], ["Womit atmen Menschen?", "Lunge"], ["Welches Sinnesorgan nutzt du zum Hören?", "Ohr"]]);
+    return task(item[0], item[1], ["Denke an die Aufgabe des Organs.", "Ordne Funktion und Körperteil zu.", `Die Antwort ist: ${item[1]}.`]);
+  }),
+  template("tpl-science-weather", "science", "science-world", "science-basics", "weather", "Wetter", "multiple-choice", 1, 10, "☁", "science", () => {
+    const item = randomPick([["Welches Gerät misst Temperatur?", "Thermometer"], ["Welches Gerät misst Windrichtung?", "Windfahne"], ["Was entsteht aus verdunstetem Wasser in der Höhe?", "Wolken"]]);
+    return task(item[0], item[1], ["Suche das passende Wetterwort.", "Denke an Messen und Beobachten.", `Richtig ist: ${item[1]}.`]);
+  }),
+  template("tpl-history-timeline", "history", "history-time", "history-basics", "timeline", "Zeitstrahl", "text", 5, 10, "⌛", "timeline", () => {
+    const item = randomPick([["Was kommt früher: Mittelalter oder Neuzeit?", "Mittelalter"], ["Was kommt früher: Steinzeit oder Römerzeit?", "Steinzeit"], ["Was kommt später: Antike oder Mittelalter?", "Mittelalter"]]);
+    return task(item[0], item[1], ["Ordne die Begriffe auf einem Zeitstrahl.", "Früher steht links, später rechts.", `Die richtige Antwort ist: ${item[1]}.`]);
+  }),
+  template("tpl-history-sources", "history", "history-time", "history-basics", "sources", "Quellen verstehen", "text", 5, 10, "⌛", "timeline", () => {
+    const item = randomPick([["Ist ein Tagebuch eher Quelle oder Epoche?", "Quelle"], ["Ist ein altes Foto eine Quelle oder eine Himmelsrichtung?", "Quelle"], ["Ist die Antike eine Quelle oder eine Epoche?", "Epoche"]]);
+    return task(item[0], item[1], ["Frage dich, ob es ein Zeugnis aus der Zeit ist.", "Quellen helfen, Vergangenheit zu untersuchen.", `Die Antwort ist: ${item[1]}.`]);
+  }),
+  template("tpl-geography-compass", "geography", "geography-map", "geo-basics", "compass", "Himmelsrichtungen", "text", 3, 10, "⌖", "geography", () => {
+    const item = randomPick([["Welche Himmelsrichtung liegt auf Karten meistens oben?", "Norden"], ["Welche Richtung liegt gegenüber von Osten?", "Westen"], ["Welche Richtung liegt gegenüber von Süden?", "Norden"]]);
+    return task(item[0], item[1], ["Denke an die Windrose.", "Gegenüberliegende Richtungen stehen sich auf der Karte gegenüber.", `Richtig ist: ${item[1]}.`]);
+  }),
+  template("tpl-geography-scale", "geography", "geography-map", "geo-basics", "scale", "Maßstab", "unit", 5, 10, "⌖", "geography", () => {
+    const cm = randomInt(2, 9);
+    const km = cm * 2;
+    return task(`Auf einer Karte entsprechen 1 cm genau 2 km. Wie viele Kilometer sind ${cm} cm?`, km, ["Jeder Zentimeter steht für 2 km.", `Rechne ${cm} mal 2.`, `${cm} cm entsprechen ${km} km.`], [`${km} km`]);
+  }),
+  template("tpl-cs-patterns", "computer-science", "coding-logic", "cs-basics", "patterns", "Muster erkennen", "number", 3, 10, "01", "logic", () => {
+    const start = randomInt(1, 8);
+    const step = randomInt(2, 6);
+    const values = [start, start + step, start + 2 * step, start + 3 * step];
+    const answer = start + 4 * step;
+    return task(`Setze die Zahlenfolge fort: ${values.join(", ")}, ?`, answer, [`Die Folge wächst immer um ${step}.`, `Addiere ${step} zur letzten Zahl.`, `Die nächste Zahl ist ${answer}.`]);
+  }),
+  template("tpl-cs-binary", "computer-science", "coding-logic", "cs-basics", "binary", "Binärzahlen", "number", 5, 10, "01", "logic", () => {
+    const item = randomPick([["10", 2], ["11", 3], ["100", 4], ["101", 5], ["110", 6]]);
+    return task(`Welche Dezimalzahl ist die Binärzahl ${item[0]}?`, item[1], ["Binärzahlen nutzen Zweierstellen.", "Lies von rechts: 1, 2, 4, 8 ...", `${item[0]} entspricht ${item[1]}.`]);
+  }),
+];
 
 export const fixedTests = [
   {
@@ -184,7 +379,7 @@ export const fixedTests = [
   },
 ];
 
-export function generateQuestion({ moduleId, grade = 3, missionId = null, level = null }) {
+export function generateQuestion({ subjectId = null, moduleId, grade = 3, missionId = null, level = null, templateId = null }) {
   const generators = {
     arithmetic: arithmeticQuestion,
     fractions: fractionsQuestion,
@@ -197,10 +392,15 @@ export function generateQuestion({ moduleId, grade = 3, missionId = null, level 
     coordinates: coordinatesQuestion,
     statistics: statisticsQuestion,
   };
-  const module = moduleId ?? missionFor(missionId)?.moduleId ?? "geometry";
-  const question = (generators[module] ?? geometryQuestion)(Number(grade), Number(level ?? grade));
+  const selectedSubject = subjectId ?? missionFor(missionId)?.subjectId ?? subjectForModule(moduleId)?.id ?? "math";
+  const module = moduleId ?? missionFor(missionId)?.moduleId ?? firstModuleForSubject(selectedSubject)?.id ?? "geometry";
+  const templateQuestion = generateFromTemplate({ subjectId: selectedSubject, moduleId: module, grade, level, templateId });
+  const question = templateQuestion ?? (generators[module] ?? geometryQuestion)(Number(grade), Number(level ?? grade));
+  const subject = question.subjectId ?? subjectForModule(question.moduleId)?.id ?? selectedSubject;
   return {
     ...question,
+    subjectId: subject,
+    topicId: question.topicId ?? topicForModule(question.moduleId)?.id ?? null,
     missionId: missionId ?? missionForModule(question.moduleId)?.id ?? null,
     level: Number(level ?? grade),
   };
@@ -212,6 +412,42 @@ export function gradeAnswer(question, answer) {
   return {
     correct: accepted.includes(normalized),
   };
+}
+
+export function nextAdaptiveLevel(level, correct) {
+  const current = Number(level) || 1;
+  return Math.max(1, Math.min(10, current + (correct ? 1 : -1)));
+}
+
+export function adaptiveSummary(results = []) {
+  const total = results.length;
+  const correct = results.filter((item) => item.correct).length;
+  const accuracy = total ? Math.round((correct / total) * 100) : 0;
+  const lastLevel = results[results.length - 1]?.level ?? 1;
+  return {
+    total,
+    correct,
+    accuracy,
+    level: lastLevel,
+    status: accuracy >= 80 ? "bereit für schwere Aufgaben" : accuracy >= 50 ? "weiter üben" : "Grundlagen wiederholen",
+  };
+}
+
+export function estimateTemplateCapacity() {
+  return taskTemplates.length * subjects.length * 10 * 1000000;
+}
+
+export function validateGeneratedQuestion(questionItem) {
+  return Boolean(
+    questionItem?.subjectId &&
+      questionItem?.moduleId &&
+      questionItem?.skillId &&
+      questionItem?.prompt &&
+      questionItem?.answer !== undefined &&
+      questionItem?.hintSteps?.length >= 3 &&
+      questionItem?.errorType &&
+      questionItem?.answerType
+  );
 }
 
 export function starsForAttempt({ correct, hintCount = 0 }) {
@@ -293,8 +529,10 @@ export function getMissionProgress(progressItems, missionId) {
 }
 
 function mission(id, moduleId, title, description, badge, visual, gradeMin, gradeMax, order) {
+  const subjectId = subjectForModule(moduleId)?.id ?? "math";
   return {
     id,
+    subjectId,
     moduleId,
     title,
     description,
@@ -305,6 +543,67 @@ function mission(id, moduleId, title, description, badge, visual, gradeMin, grad
     order,
     targetCount: 6,
   };
+}
+
+function subject(id, title, description, visual, color, gradeMin, gradeMax, order) {
+  return { id, title, description, visual, color, gradeMin, gradeMax, order };
+}
+
+function topic(id, subjectId, moduleId, title, gradeMin, gradeMax) {
+  return { id, subjectId, moduleId, title, gradeMin, gradeMax };
+}
+
+function template(id, subjectId, moduleId, topicId, skillId, title, answerType, gradeMin, gradeMax, visual, errorType, create) {
+  return { id, subjectId, moduleId, topicId, skillId, title, answerType, gradeMin, gradeMax, visual, errorType, create };
+}
+
+function task(prompt, answer, hintSteps, acceptedAnswers = []) {
+  return { prompt, answer, hintSteps, acceptedAnswers };
+}
+
+function generateFromTemplate({ subjectId, moduleId, grade = 3, level = null, templateId = null }) {
+  const numericGrade = Number(level ?? grade);
+  const matchesScope = (item) => {
+    if (templateId && item.id !== templateId) return false;
+    if (!templateId && moduleId && item.moduleId !== moduleId) return false;
+    if (!templateId && !moduleId && subjectId && item.subjectId !== subjectId) return false;
+    return true;
+  };
+  let candidates = taskTemplates.filter((item) => {
+    if (!matchesScope(item)) return false;
+    return numericGrade >= item.gradeMin && numericGrade <= item.gradeMax;
+  });
+  if (!candidates.length) candidates = taskTemplates.filter(matchesScope);
+  const selected = candidates.length ? randomPick(candidates) : null;
+  if (!selected) return null;
+  const generated = selected.create({ grade: Number(grade), level: numericGrade });
+  return {
+    id: cryptoSafeId(),
+    subjectId: selected.subjectId,
+    moduleId: selected.moduleId,
+    topicId: selected.topicId,
+    skillId: selected.skillId,
+    templateId: selected.id,
+    answerType: selected.answerType,
+    title: selected.title,
+    prompt: generated.prompt,
+    answer: generated.answer,
+    acceptedAnswers: generated.acceptedAnswers ?? [],
+    hint: generated.hintSteps[0],
+    hintSteps: generated.hintSteps,
+    explanation: generated.hintSteps[generated.hintSteps.length - 1],
+    errorType: selected.errorType,
+    placeholder: placeholderForAnswerType(selected.answerType),
+    visual: selected.visual,
+    type: "template-generated",
+  };
+}
+
+function placeholderForAnswerType(answerType) {
+  if (answerType === "multiple-choice") return "Antwort oder Begriff";
+  if (answerType === "unit") return "Antwort mit Einheit möglich";
+  if (answerType === "text") return "Wort oder kurzer Satz";
+  return "Antwort";
 }
 
 function arithmeticQuestion(grade) {
@@ -631,10 +930,15 @@ function statisticsQuestion() {
 }
 
 function question(moduleId, skillId, title, prompt, answer, hintSteps, errorType, acceptedAnswers = [], visual = "✦") {
+  const subjectId = subjectForModule(moduleId)?.id ?? "math";
   return {
     id: cryptoSafeId(),
+    subjectId,
     moduleId,
+    topicId: topicForModule(moduleId)?.id ?? null,
     skillId,
+    templateId: null,
+    answerType: inferAnswerType(answer, acceptedAnswers),
     title,
     prompt,
     answer,
@@ -650,10 +954,15 @@ function question(moduleId, skillId, title, prompt, answer, hintSteps, errorType
 }
 
 function makeStaticQuestion(moduleId, skillId, prompt, answer, accepted, hintSteps) {
+  const subjectId = subjectForModule(moduleId)?.id ?? "math";
   return {
     id: `${moduleId}-${skillId}-${answer}`,
+    subjectId,
     moduleId,
+    topicId: topicForModule(moduleId)?.id ?? null,
     skillId,
+    templateId: null,
+    answerType: inferAnswerType(answer, [accepted]),
     missionId: missionForModule(moduleId)?.id ?? null,
     level: null,
     title: titleFor(moduleId),
@@ -718,6 +1027,10 @@ function normalizeAnswer(value) {
   return String(value)
     .trim()
     .toLowerCase()
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
     .replace(",", ".")
     .replace(/\s+/g, "")
     .replace(/€/g, "euro")
@@ -729,12 +1042,35 @@ function titleFor(moduleId) {
   return learningModules.find((item) => item.id === moduleId)?.title ?? moduleId;
 }
 
+export function subjectTitle(subjectId) {
+  return subjects.find((item) => item.id === subjectId)?.title ?? subjectId ?? "-";
+}
+
 function missionFor(missionId) {
   return missions.find((item) => item.id === missionId);
 }
 
 function missionForModule(moduleId) {
   return missions.find((item) => item.moduleId === moduleId);
+}
+
+function subjectForModule(moduleId) {
+  const moduleItem = learningModules.find((item) => item.id === moduleId);
+  return subjects.find((item) => item.id === moduleItem?.subjectId) ?? null;
+}
+
+function topicForModule(moduleId) {
+  return topics.find((item) => item.moduleId === moduleId) ?? null;
+}
+
+function firstModuleForSubject(subjectId) {
+  return learningModules.find((item) => item.subjectId === subjectId);
+}
+
+function inferAnswerType(answer, acceptedAnswers = []) {
+  if (typeof answer === "number") return Number.isInteger(answer) ? "number" : "decimal";
+  if ([String(answer), ...acceptedAnswers.map(String)].some((item) => /\d+\s*(cm|km|kg|g|ml|l|€|euro|ct|cm²|cm2)/i.test(item))) return "unit";
+  return "text";
 }
 
 function randomInt(min, max) {
