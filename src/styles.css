@@ -173,11 +173,23 @@ button {
 
 .mode-switch {
   margin-top: 14px;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .dashboard-filter {
   max-width: 260px;
   margin-top: 14px;
+}
+
+.dashboard-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.test-grade-select {
+  max-width: 160px;
+  margin-top: 12px;
 }
 
 .feature-strip span {
@@ -669,6 +681,38 @@ select:focus {
   gap: 7px;
   color: var(--muted);
   font-weight: 900;
+}
+
+.answer-control {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.choice-button {
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: #31506b;
+  font-weight: 900;
+  text-align: center;
+}
+
+.choice-button.active,
+.choice-button:hover {
+  border-color: var(--teal);
+  background: #eefaf8;
+  color: var(--teal-dark);
 }
 
 .feedback {

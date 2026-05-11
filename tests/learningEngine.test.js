@@ -30,7 +30,7 @@ test("covers the planned school subjects and modules", () => {
     "computer-science",
   ]);
   const ids = learningModules.map((module) => module.id);
-  assert.deepEqual(ids, [
+  for (const expected of [
     "arithmetic",
     "fractions",
     "decimals",
@@ -42,17 +42,49 @@ test("covers the planned school subjects and modules", () => {
     "coordinates",
     "statistics",
     "german-language",
+    "german-spelling",
+    "german-grammar",
+    "german-punctuation",
+    "german-reading",
     "english-basics",
+    "english-vocabulary",
+    "english-grammar",
+    "english-dialogues",
+    "english-reading",
     "science-world",
+    "science-body",
+    "science-animals",
+    "science-weather",
+    "science-energy",
+    "science-space",
     "history-time",
+    "history-timeline",
+    "history-sources",
+    "history-daily-life",
+    "history-eras",
     "geography-map",
+    "geography-orientation",
+    "geography-germany",
+    "geography-europe",
+    "geography-scale",
+    "geography-climate",
     "coding-logic",
-  ]);
+    "cs-patterns",
+    "cs-algorithms",
+    "cs-data",
+    "cs-binary",
+  ]) {
+    assert.equal(ids.includes(expected), true, `missing module ${expected}`);
+  }
+  for (const subject of subjects) {
+    assert.ok(learningModules.filter((module) => module.subjectId === subject.id).length >= 4, `not enough modules for ${subject.id}`);
+  }
 });
 
 test("generates valid questions for every module and grade band", () => {
   for (const module of learningModules) {
-    for (const grade of [2, 5, 9]) {
+    const grades = [...new Set([module.gradeMin, Math.ceil((module.gradeMin + module.gradeMax) / 2), module.gradeMax])];
+    for (const grade of grades) {
       const question = generateQuestion({ moduleId: module.id, grade });
       assert.equal(question.moduleId, module.id);
       assert.equal(question.subjectId, module.subjectId);
@@ -67,7 +99,7 @@ test("generates valid questions for every module and grade band", () => {
 });
 
 test("task templates generate many valid questions per template", () => {
-  assert.ok(taskTemplates.length >= 16);
+  assert.ok(taskTemplates.length >= 50);
   assert.ok(estimateTemplateCapacity() > 1000000000);
   for (const template of taskTemplates) {
     for (let index = 0; index < 100; index += 1) {
@@ -76,8 +108,26 @@ test("task templates generate many valid questions per template", () => {
       assert.equal(question.templateId, template.id);
       assert.equal(validateGeneratedQuestion(question), true);
       assert.equal(gradeAnswer(question, String(question.answer)).correct, true);
+      if (question.answerType === "multiple-choice") {
+        assert.ok(question.choices.length >= 3);
+        assert.ok(question.choices.includes(String(question.answer)));
+      }
     }
   }
+});
+
+test("grades deeper answer types and localized text variants", () => {
+  const multipleChoice = generateQuestion({ moduleId: "german-grammar", templateId: "tpl-german-sentence-parts", grade: 4 });
+  assert.equal(multipleChoice.answerType, "multiple-choice");
+  assert.equal(gradeAnswer(multipleChoice, multipleChoice.answer).correct, true);
+
+  const ordering = generateQuestion({ moduleId: "cs-algorithms", templateId: "tpl-cs-algorithm-order", grade: 4 });
+  assert.equal(ordering.answerType, "ordering");
+  assert.equal(gradeAnswer(ordering, "Zahnpasta auftragen, bürsten, ausspucken").correct, true);
+
+  const fillBlank = generateQuestion({ moduleId: "english-grammar", templateId: "tpl-english-grammar-be", grade: 4 });
+  assert.equal(fillBlank.answerType, "fill-blank");
+  assert.equal(gradeAnswer(fillBlank, String(fillBlank.answer).toUpperCase()).correct, true);
 });
 
 test("defines one playable mission for every module", () => {

@@ -741,10 +741,7 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
           <div className="question-visual">{question.visual}</div>
           <p className="question-prompt">{question.prompt}</p>
           <form className="answer-form" onSubmit={submit}>
-            <label>
-              Deine Antwort
-              <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
-            </label>
+            <AnswerControl question={question} value={answer} onChange={setAnswer} label="Deine Antwort" />
             <button className="primary-button" type="button" onClick={submitAnswer} disabled={!answer.trim()}>
               <CheckCircle2 size={18} />
               Prüfen
@@ -797,27 +794,60 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
 function TestsView({ activeChild, attempts, onAttempt }) {
   const [mode, setMode] = useState("adaptive");
   const [subjectId, setSubjectId] = useState("math");
+  const [selectedGrade, setSelectedGrade] = useState(activeChild?.grade ?? 3);
+  const subjectModules = useMemo(() => learningModules.filter((module) => module.subjectId === subjectId), [subjectId]);
+  const [activeModuleId, setActiveModuleId] = useState(subjectModules[0]?.id ?? "arithmetic");
   const [activeTestId, setActiveTestId] = useState("diagnose-klasse-5");
   const test = fixedTests.find((item) => item.id === activeTestId);
+
+  useEffect(() => {
+    setSelectedGrade(activeChild?.grade ?? 3);
+  }, [activeChild?.id, activeChild?.grade]);
+
+  useEffect(() => {
+    setActiveModuleId((current) => subjectModules.some((module) => module.id === current) ? current : subjectModules[0]?.id ?? "arithmetic");
+  }, [subjectModules]);
+
   return (
     <section className="two-column">
       <div className="panel">
         <p className="section-label">Tests</p>
-        <h2>Adaptive Checks & feste Tests</h2>
+        <h2>Adaptive Checks & Modul-Checks</h2>
         <div className="segment-control mode-switch">
           <button type="button" className={mode === "adaptive" ? "active" : ""} onClick={() => setMode("adaptive")}>Adaptiv</button>
+          <button type="button" className={mode === "module" ? "active" : ""} onClick={() => setMode("module")}>Modul-Check</button>
           <button type="button" className={mode === "fixed" ? "active" : ""} onClick={() => setMode("fixed")}>Fest</button>
         </div>
-        {mode === "adaptive" && <SubjectPicker activeSubjectId={subjectId} onSelect={setSubjectId} />}
+        {mode !== "fixed" && (
+          <>
+            <SubjectPicker activeSubjectId={subjectId} onSelect={setSubjectId} />
+            <label className="small-select test-grade-select">
+              Klasse
+              <select value={selectedGrade} onChange={(event) => setSelectedGrade(Number(event.target.value))}>
+                {[1, 2, 3, 4, 5, 6].map((grade) => <option key={grade} value={grade}>{grade}</option>)}
+              </select>
+            </label>
+          </>
+        )}
         <div className="test-list">
           {mode === "adaptive" ? (
             <div className="test-item active">
               <ClipboardList size={20} />
               <span>
                 <strong>Adaptiver {subjectTitle(subjectId)}-Check</strong>
-                <small>6 Aufgaben · Schwierigkeit passt sich automatisch an</small>
+                <small>6 Aufgaben · Klasse {selectedGrade} · Schwierigkeit passt sich automatisch an</small>
               </span>
             </div>
+          ) : mode === "module" ? (
+            subjectModules.map((module) => (
+              <button key={module.id} className={module.id === activeModuleId ? "test-item active" : "test-item"} onClick={() => setActiveModuleId(module.id)}>
+                <ClipboardList size={20} />
+                <span>
+                  <strong>{module.title}</strong>
+                  <small>6 Aufgaben · Klasse {selectedGrade} · {module.skills.slice(0, 2).join(", ")}</small>
+                </span>
+              </button>
+            ))
           ) : (
             fixedTests.map((item) => (
               <button key={item.id} className={item.id === activeTestId ? "test-item active" : "test-item"} onClick={() => setActiveTestId(item.id)}>
@@ -832,7 +862,9 @@ function TestsView({ activeChild, attempts, onAttempt }) {
         </div>
       </div>
       {mode === "adaptive" ? (
-        <AdaptiveTestRunner activeChild={activeChild} subjectId={subjectId} onAttempt={onAttempt} />
+        <AdaptiveTestRunner activeChild={activeChild} subjectId={subjectId} selectedGrade={selectedGrade} onAttempt={onAttempt} />
+      ) : mode === "module" ? (
+        <ModuleCheckRunner activeChild={activeChild} moduleId={activeModuleId} selectedGrade={selectedGrade} onAttempt={onAttempt} />
       ) : (
         <TestRunner activeChild={activeChild} test={test} onAttempt={onAttempt} attempts={attempts} />
       )}
@@ -840,22 +872,22 @@ function TestsView({ activeChild, attempts, onAttempt }) {
   );
 }
 
-function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
-  const initialLevel = Math.max(1, Math.min(10, activeChild?.grade ?? 3));
+function AdaptiveTestRunner({ activeChild, subjectId, selectedGrade, onAttempt }) {
+  const initialLevel = Math.max(1, Math.min(6, selectedGrade ?? activeChild?.grade ?? 3));
   const [level, setLevel] = useState(initialLevel);
-  const [question, setQuestion] = useState(() => generateQuestion({ subjectId, grade: activeChild?.grade ?? 3, level: initialLevel }));
+  const [question, setQuestion] = useState(() => generateQuestion({ subjectId, grade: selectedGrade ?? activeChild?.grade ?? 3, level: initialLevel }));
   const [answer, setAnswer] = useState("");
   const [results, setResults] = useState([]);
   const [startedAt, setStartedAt] = useState(Date.now());
 
   useEffect(() => {
-    const nextLevel = Math.max(1, Math.min(10, activeChild?.grade ?? 3));
+    const nextLevel = Math.max(1, Math.min(6, selectedGrade ?? activeChild?.grade ?? 3));
     setLevel(nextLevel);
-    setQuestion(generateQuestion({ subjectId, grade: activeChild?.grade ?? 3, level: nextLevel }));
+    setQuestion(generateQuestion({ subjectId, grade: selectedGrade ?? activeChild?.grade ?? 3, level: nextLevel }));
     setAnswer("");
     setResults([]);
     setStartedAt(Date.now());
-  }, [activeChild?.id, activeChild?.grade, subjectId]);
+  }, [activeChild?.id, activeChild?.grade, selectedGrade, subjectId]);
 
   if (!activeChild) {
     return <EmptyState title="Kein Profil ausgewählt" text="Wähle ein Kind aus, um adaptive Tests zu starten." />;
@@ -883,7 +915,7 @@ function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
       duration_ms: Date.now() - startedAt,
       error_type: result.correct ? null : question.errorType,
       explanation: question.explanation,
-      grade_level: String(activeChild.grade),
+      grade_level: String(selectedGrade),
       test_id: `adaptive-${subjectId}`,
       mission_id: question.missionId,
       level,
@@ -894,7 +926,7 @@ function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
     setResults(nextResults);
     setAnswer("");
     setLevel(nextLevel);
-    setQuestion(generateQuestion({ subjectId, grade: activeChild.grade, level: nextLevel }));
+    setQuestion(generateQuestion({ subjectId, grade: selectedGrade, level: nextLevel }));
     setStartedAt(Date.now());
   }
 
@@ -914,7 +946,7 @@ function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
           <button className="primary-button" type="button" onClick={() => {
             setLevel(initialLevel);
             setResults([]);
-            setQuestion(generateQuestion({ subjectId, grade: activeChild.grade, level: initialLevel }));
+            setQuestion(generateQuestion({ subjectId, grade: selectedGrade, level: initialLevel }));
             setStartedAt(Date.now());
           }}>Check neu starten</button>
         </div>
@@ -922,15 +954,126 @@ function AdaptiveTestRunner({ activeChild, subjectId, onAttempt }) {
         <form className="exercise-card" onSubmit={submit}>
           <div className="question-visual">{question.visual}</div>
           <p className="question-prompt">{question.prompt}</p>
-          <label>
-            Antwort
-            <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
-          </label>
+          <AnswerControl question={question} value={answer} onChange={setAnswer} label="Antwort" />
           <button className="primary-button" type="button" onClick={saveAnswer} disabled={!answer.trim()}>Antwort speichern</button>
         </form>
       )}
     </section>
   );
+}
+
+function ModuleCheckRunner({ activeChild, moduleId, selectedGrade, onAttempt }) {
+  const [questions, setQuestions] = useState(() => buildModuleCheck(moduleId, selectedGrade));
+  const [index, setIndex] = useState(0);
+  const [answer, setAnswer] = useState("");
+  const [results, setResults] = useState([]);
+  const [startedAt, setStartedAt] = useState(Date.now());
+  const module = learningModules.find((item) => item.id === moduleId);
+  const question = questions[index] ?? questions[0];
+
+  useEffect(() => {
+    setQuestions(buildModuleCheck(moduleId, selectedGrade));
+    setIndex(0);
+    setAnswer("");
+    setResults([]);
+    setStartedAt(Date.now());
+  }, [moduleId, selectedGrade, activeChild?.id]);
+
+  if (!activeChild) {
+    return <EmptyState title="Kein Profil ausgewählt" text="Wähle ein Kind aus, um Modul-Checks zu starten." />;
+  }
+
+  const finished = results.length === questions.length;
+
+  async function saveAnswer() {
+    if (!answer.trim() || finished) return;
+    const result = gradeAnswer(question, answer);
+    await onAttempt({
+      module_id: question.moduleId,
+      subject_id: question.subjectId,
+      topic_id: question.topicId,
+      skill_id: question.skillId,
+      template_id: question.templateId,
+      answer_type: question.answerType,
+      question_type: "module-check",
+      prompt: question.prompt,
+      expected_answer: String(question.answer),
+      given_answer: answer,
+      is_correct: result.correct,
+      duration_ms: Date.now() - startedAt,
+      error_type: result.correct ? null : question.errorType,
+      explanation: question.explanation,
+      grade_level: String(selectedGrade),
+      test_id: `module-${moduleId}-klasse-${selectedGrade}`,
+      mission_id: question.missionId,
+      level: selectedGrade,
+      hint_count: 0,
+      stars_awarded: result.correct ? 1 : 0,
+    });
+    setResults((current) => [...current, result.correct]);
+    setAnswer("");
+    if (index < questions.length - 1) {
+      setIndex(index + 1);
+      setStartedAt(Date.now());
+    }
+  }
+
+  function restart() {
+    setQuestions(buildModuleCheck(moduleId, selectedGrade));
+    setIndex(0);
+    setAnswer("");
+    setResults([]);
+    setStartedAt(Date.now());
+  }
+
+  return (
+    <section className="panel test-runner">
+      <p className="section-label">Modul-Check · {subjectTitle(module?.subjectId)} · Klasse {selectedGrade}</p>
+      <h2>{finished ? `${module?.title ?? "Modul"} abgeschlossen` : `Aufgabe ${index + 1} von ${questions.length}`}</h2>
+      {finished ? (
+        <div className="score-result">
+          <strong>{results.filter(Boolean).length}/{questions.length}</strong>
+          <span>richtig gelöst</span>
+          <button className="primary-button" type="button" onClick={restart}>Modul-Check neu starten</button>
+        </div>
+      ) : (
+        <form className="exercise-card" onSubmit={(event) => { event.preventDefault(); saveAnswer(); }}>
+          <div className="question-visual">{question.visual}</div>
+          <p className="question-prompt">{question.prompt}</p>
+          <AnswerControl question={question} value={answer} onChange={setAnswer} label="Antwort" />
+          <button className="primary-button" type="button" onClick={saveAnswer} disabled={!answer.trim()}>Antwort speichern</button>
+        </form>
+      )}
+    </section>
+  );
+}
+
+function AnswerControl({ question, value, onChange, label }) {
+  const choices = question.choices ?? [];
+  return (
+    <label className={choices.length ? "answer-control with-choices" : "answer-control"}>
+      {label}
+      {choices.length > 0 && (
+        <div className="choice-grid">
+          {choices.map((choice) => (
+            <button
+              key={choice}
+              type="button"
+              className={value === choice ? "choice-button active" : "choice-button"}
+              onClick={() => onChange(choice)}
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
+      )}
+      <input value={value} onChange={(event) => onChange(event.target.value)} placeholder={question.placeholder} />
+    </label>
+  );
+}
+
+function buildModuleCheck(moduleId, grade) {
+  return Array.from({ length: 6 }, () => generateQuestion({ moduleId, grade, level: grade }));
 }
 
 function TestRunner({ activeChild, test, onAttempt }) {
@@ -1002,10 +1145,7 @@ function TestRunner({ activeChild, test, onAttempt }) {
         <form className="exercise-card" onSubmit={submit}>
           <div className="question-visual">{question.visual}</div>
           <p className="question-prompt">{question.prompt}</p>
-          <label>
-            Antwort
-            <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
-          </label>
+          <AnswerControl question={question} value={answer} onChange={setAnswer} label="Antwort" />
           <button className="primary-button" type="button" onClick={saveAnswer} disabled={!answer.trim()}>Antwort speichern</button>
         </form>
       )}
@@ -1244,28 +1384,42 @@ function ClassAttemptFilters({ filters, children, attempts, onChange }) {
 
 function AdultDashboard({ activeChild, attempts, missionProgress, summary }) {
   const [subjectFilter, setSubjectFilter] = useState("");
+  const [moduleFilter, setModuleFilter] = useState("");
   if (!activeChild) {
     return <EmptyState title="Kein Lernstand verfügbar" text="Lege ein Kinderprofil an und löse Aufgaben, um Empfehlungen zu sehen." />;
   }
-  const filteredAttempts = subjectFilter
-    ? attempts.filter((attempt) => (attempt.subject_id ?? subjectForModuleId(attempt.module_id)) === subjectFilter)
-    : attempts;
-  const filteredProgress = subjectFilter
-    ? missionProgress.filter((progress) => missions.find((mission) => mission.id === progress.mission_id)?.subjectId === subjectFilter)
-    : missionProgress;
-  const dashboardSummary = subjectFilter ? summarizeAttempts(filteredAttempts, filteredProgress) : summary;
+  const filteredAttempts = attempts
+    .filter((attempt) => !subjectFilter || (attempt.subject_id ?? subjectForModuleId(attempt.module_id)) === subjectFilter)
+    .filter((attempt) => !moduleFilter || attempt.module_id === moduleFilter);
+  const filteredProgress = missionProgress.filter((progress) => {
+    const mission = missions.find((item) => item.id === progress.mission_id);
+    if (subjectFilter && mission?.subjectId !== subjectFilter) return false;
+    if (moduleFilter && mission?.moduleId !== moduleFilter) return false;
+    return true;
+  });
+  const dashboardSummary = subjectFilter || moduleFilter ? summarizeAttempts(filteredAttempts, filteredProgress) : summary;
+  const moduleOptions = learningModules.filter((module) => !subjectFilter || module.subjectId === subjectFilter);
   return (
     <section className="dashboard-grid">
       <div className="panel hero-panel">
         <p className="section-label">Lernstand</p>
         <h2>{activeChild.name}: Klasse {activeChild.grade}</h2>
-        <label className="small-select dashboard-filter">
-          Fachfilter
-          <select value={subjectFilter} onChange={(event) => setSubjectFilter(event.target.value)}>
-            <option value="">Alle Fächer</option>
-            {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.title}</option>)}
-          </select>
-        </label>
+        <div className="dashboard-filter-row">
+          <label className="small-select dashboard-filter">
+            Fachfilter
+            <select value={subjectFilter} onChange={(event) => { setSubjectFilter(event.target.value); setModuleFilter(""); }}>
+              <option value="">Alle Fächer</option>
+              {subjects.map((subject) => <option key={subject.id} value={subject.id}>{subject.title}</option>)}
+            </select>
+          </label>
+          <label className="small-select dashboard-filter">
+            Themenfilter
+            <select value={moduleFilter} onChange={(event) => setModuleFilter(event.target.value)}>
+              <option value="">Alle Themen</option>
+              {moduleOptions.map((module) => <option key={module.id} value={module.id}>{module.title}</option>)}
+            </select>
+          </label>
+        </div>
         <div className="metric-row">
           <Metric label="Antworten" value={dashboardSummary.total} />
           <Metric label="Richtig" value={`${dashboardSummary.accuracy}%`} />
@@ -1284,9 +1438,14 @@ function AdultDashboard({ activeChild, attempts, missionProgress, summary }) {
         <ErrorTypeList summary={dashboardSummary} />
       </div>
       <div className="panel">
+        <p className="section-label">Kompetenzlücken</p>
+        <h2>Themen mit Übungsbedarf</h2>
+        <SkillGapList summary={dashboardSummary} />
+      </div>
+      <div className="panel">
         <p className="section-label">Missionen</p>
         <h2>Fortschritt</h2>
-        <MissionProgressList progressItems={filteredProgress} subjectId={subjectFilter} />
+        <MissionProgressList progressItems={filteredProgress} subjectId={subjectFilter} moduleId={moduleFilter} />
       </div>
       <div className="panel wide">
         <p className="section-label">Antwortprotokoll</p>
@@ -1345,13 +1504,34 @@ function ErrorTypeList({ summary }) {
   );
 }
 
-function MissionProgressList({ progressItems, compact = false, subjectId = "" }) {
+function SkillGapList({ summary }) {
+  const gaps = [...summary.moduleScores]
+    .filter((item) => item.total > 0)
+    .sort((a, b) => a.accuracy - b.accuracy)
+    .slice(0, 5);
+  if (!gaps.length) {
+    return <p className="muted-line">Noch keine fachlichen Lücken sichtbar.</p>;
+  }
+  return (
+    <ul className="recommendation-list">
+      {gaps.map((gap) => (
+        <li key={gap.moduleId}>
+          <BarChart3 size={16} />
+          {moduleTitle(gap.moduleId)}: {gap.accuracy}% richtig bei {gap.total} Antworten
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function MissionProgressList({ progressItems, compact = false, subjectId = "", moduleId = "" }) {
   const rows = useMemo(() => missions
     .filter((mission) => !subjectId || mission.subjectId === subjectId)
+    .filter((mission) => !moduleId || mission.moduleId === moduleId)
     .map((mission) => ({
     mission,
     progress: getMissionProgress(progressItems, mission.id),
-  })), [progressItems, subjectId]);
+  })), [progressItems, subjectId, moduleId]);
   return (
     <div className={compact ? "mission-progress-list compact" : "mission-progress-list"}>
       {rows.map(({ mission, progress }) => {

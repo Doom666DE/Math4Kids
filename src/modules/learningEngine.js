@@ -1,126 +1,56 @@
 export const subjects = [
-  subject("math", "Mathe", "Zahlen, Formen, Daten und Problemlösen.", "4", "#18a999", 1, 10, 1),
-  subject("german", "Deutsch", "Lesen, Schreiben, Grammatik und Sprache.", "Aa", "#ff7568", 1, 10, 2),
-  subject("english", "Englisch", "Wortschatz, Sätze, Lesen und Übersetzen.", "EN", "#4d96ff", 1, 10, 3),
-  subject("science", "Sachkunde/Naturwissen", "Natur, Körper, Wetter, Energie und Experimente.", "⚗", "#68bd7d", 1, 10, 4),
-  subject("history", "Geschichte", "Zeit, Quellen, Epochen und Ereignisse.", "⌛", "#b47dff", 5, 10, 5),
-  subject("geography", "Geografie", "Karten, Länder, Klima, Maßstab und Orientierung.", "⌖", "#f5a623", 3, 10, 6),
-  subject("computer-science", "Informatik", "Muster, Logik, Daten und Algorithmen.", "01", "#5468ff", 3, 10, 7),
+  subject("math", "Mathe", "Zahlen, Formen, Daten und Problemlösen.", "4", "#18a999", 1, 6, 1),
+  subject("german", "Deutsch", "Lesen, Schreiben, Grammatik und Sprache.", "Aa", "#ff7568", 1, 6, 2),
+  subject("english", "Englisch", "Wortschatz, Sätze, Lesen und Übersetzen.", "EN", "#4d96ff", 1, 6, 3),
+  subject("science", "Sachkunde/Naturwissen", "Natur, Körper, Wetter, Energie und Experimente.", "⚗", "#68bd7d", 1, 6, 4),
+  subject("history", "Geschichte", "Zeit, Quellen, Epochen und Ereignisse.", "⌛", "#b47dff", 3, 6, 5),
+  subject("geography", "Geografie", "Karten, Länder, Klima, Maßstab und Orientierung.", "⌖", "#f5a623", 3, 6, 6),
+  subject("computer-science", "Informatik", "Muster, Logik, Daten und Algorithmen.", "01", "#5468ff", 3, 6, 7),
 ];
 
 export const learningModules = [
-  {
-    id: "arithmetic",
-    subjectId: "math",
-    iconKey: "brain",
-    title: "Grundrechenarten",
-    skills: ["Plus/Minus", "Mal/Geteilt", "Kopfrechnen", "Reihen"],
-  },
-  {
-    id: "fractions",
-    subjectId: "math",
-    iconKey: "book",
-    title: "Brüche",
-    skills: ["Bruchteile", "Erweitern/Kürzen", "Brüche vergleichen"],
-  },
-  {
-    id: "decimals",
-    subjectId: "math",
-    iconKey: "bar",
-    title: "Dezimalzahlen",
-    skills: ["Stellenwerte", "Runden", "Rechnen mit Kommazahlen"],
-  },
-  {
-    id: "percent",
-    subjectId: "math",
-    iconKey: "target",
-    title: "Prozent",
-    skills: ["Prozentwert", "Grundwert", "Rabatte"],
-  },
-  {
-    id: "geometry",
-    subjectId: "math",
-    iconKey: "shapes",
-    title: "Geometrie",
-    skills: ["Formen", "Umfang", "Fläche", "Winkel", "Körper"],
-  },
-  {
-    id: "measures",
-    subjectId: "math",
-    iconKey: "ruler",
-    title: "Maßeinheiten",
-    skills: ["Länge", "Gewicht", "Zeit", "Geld", "Volumen"],
-  },
-  {
-    id: "word-problems",
-    subjectId: "math",
-    iconKey: "book",
-    title: "Textaufgaben",
-    skills: ["Informationen erkennen", "Rechenweg wählen", "Antwortsatz"],
-  },
-  {
-    id: "equations",
-    subjectId: "math",
-    iconKey: "brain",
-    title: "Gleichungen",
-    skills: ["Platzhalter", "Umformen", "Probe"],
-  },
-  {
-    id: "coordinates",
-    subjectId: "math",
-    iconKey: "bar",
-    title: "Koordinaten",
-    skills: ["Punkte lesen", "Punkte eintragen", "Abstände"],
-  },
-  {
-    id: "statistics",
-    subjectId: "math",
-    iconKey: "bar",
-    title: "Statistik",
-    skills: ["Tabellen", "Diagramme", "Mittelwert"],
-  },
-  {
-    id: "german-language",
-    subjectId: "german",
-    iconKey: "book",
-    title: "Deutsch-Grundlagen",
-    skills: ["Rechtschreibung", "Wortarten", "Satzglieder", "Leseverständnis"],
-  },
-  {
-    id: "english-basics",
-    subjectId: "english",
-    iconKey: "book",
-    title: "Englisch-Basics",
-    skills: ["Vokabeln", "Satzbau", "Übersetzen", "Leseverständnis"],
-  },
-  {
-    id: "science-world",
-    subjectId: "science",
-    iconKey: "target",
-    title: "Naturwissen",
-    skills: ["Körper", "Tiere/Pflanzen", "Wetter", "Energie"],
-  },
-  {
-    id: "history-time",
-    subjectId: "history",
-    iconKey: "bar",
-    title: "Geschichte",
-    skills: ["Zeitstrahl", "Quellen", "Epochen", "Begriffe"],
-  },
-  {
-    id: "geography-map",
-    subjectId: "geography",
-    iconKey: "ruler",
-    title: "Geografie",
-    skills: ["Karten", "Länder", "Klima", "Maßstab"],
-  },
-  {
-    id: "coding-logic",
-    subjectId: "computer-science",
-    iconKey: "brain",
-    title: "Informatik-Grundlagen",
-    skills: ["Muster", "Logik", "Algorithmen", "Daten"],
-  },
+  module("arithmetic", "math", "brain", "Grundrechenarten", ["Plus/Minus", "Mal/Geteilt", "Kopfrechnen", "Reihen"], 1, 6),
+  module("fractions", "math", "book", "Brüche", ["Bruchteile", "Erweitern/Kürzen", "Brüche vergleichen"], 3, 6),
+  module("decimals", "math", "bar", "Dezimalzahlen", ["Stellenwerte", "Runden", "Rechnen mit Kommazahlen"], 4, 6),
+  module("percent", "math", "target", "Prozent", ["Prozentwert", "Grundwert", "Rabatte"], 5, 6),
+  module("geometry", "math", "shapes", "Geometrie", ["Formen", "Umfang", "Fläche", "Winkel", "Körper"], 2, 6),
+  module("measures", "math", "ruler", "Maßeinheiten", ["Länge", "Gewicht", "Zeit", "Geld", "Volumen"], 2, 6),
+  module("word-problems", "math", "book", "Textaufgaben", ["Informationen erkennen", "Rechenweg wählen", "Antwortsatz"], 2, 6),
+  module("equations", "math", "brain", "Gleichungen", ["Platzhalter", "Umformen", "Probe"], 5, 6),
+  module("coordinates", "math", "bar", "Koordinaten", ["Punkte lesen", "Punkte eintragen", "Abstände"], 5, 6),
+  module("statistics", "math", "bar", "Statistik", ["Tabellen", "Diagramme", "Mittelwert"], 4, 6),
+  module("german-language", "german", "book", "Deutsch-Grundlagen", ["Rechtschreibung", "Wortarten", "Satzglieder", "Leseverständnis"], 1, 6),
+  module("german-spelling", "german", "book", "Rechtschreib-Werkstatt", ["Merkwörter", "Doppelkonsonanten", "Dehnung", "Fehler finden"], 1, 6),
+  module("german-grammar", "german", "brain", "Grammatik-Labor", ["Wortarten", "Satzglieder", "Zeitformen", "Satzbau"], 2, 6),
+  module("german-punctuation", "german", "target", "Zeichensetzung", ["Satzzeichen", "Kommas", "Wörtliche Rede", "Satzarten"], 3, 6),
+  module("german-reading", "german", "book", "Lese-Detektiv", ["Hauptaussage", "Details", "Schlussfolgern", "Textsorten"], 2, 6),
+  module("english-basics", "english", "book", "Englisch-Basics", ["Vokabeln", "Satzbau", "Übersetzen", "Leseverständnis"], 1, 6),
+  module("english-vocabulary", "english", "book", "Vocabulary Quest", ["Alltag", "Schule", "Familie", "Tiere"], 1, 6),
+  module("english-grammar", "english", "brain", "Grammar Base", ["to be", "simple present", "Fragen", "Verneinung"], 3, 6),
+  module("english-dialogues", "english", "target", "Dialog-Training", ["Begrüßen", "Fragen", "Antworten", "Alltagssätze"], 3, 6),
+  module("english-reading", "english", "book", "Reading Corner", ["Kurztexte", "Hauptidee", "Details", "Wortbedeutung"], 4, 6),
+  module("science-world", "science", "target", "Naturwissen", ["Körper", "Tiere/Pflanzen", "Wetter", "Energie"], 1, 6),
+  module("science-body", "science", "brain", "Körper & Gesundheit", ["Organe", "Sinne", "Ernährung", "Bewegung"], 1, 6),
+  module("science-animals", "science", "book", "Tiere & Pflanzen", ["Lebensräume", "Pflanzenteile", "Nahrungsketten", "Anpassung"], 1, 6),
+  module("science-weather", "science", "bar", "Wetter & Klima", ["Wettergeräte", "Wasserkreislauf", "Jahreszeiten", "Beobachten"], 2, 6),
+  module("science-energy", "science", "target", "Energie & Experimente", ["Strom", "Licht", "Wärme", "Versuche"], 3, 6),
+  module("science-space", "science", "bar", "Erde & Weltall", ["Planeten", "Mond", "Tag/Nacht", "Jahreszeiten"], 4, 6),
+  module("history-time", "history", "bar", "Geschichte", ["Zeitstrahl", "Quellen", "Epochen", "Begriffe"], 3, 6),
+  module("history-timeline", "history", "bar", "Zeitstrahl", ["Reihenfolge", "Jahrhunderte", "früher/später", "Ereignisse"], 3, 6),
+  module("history-sources", "history", "book", "Quellen-Forscher", ["Fotos", "Briefe", "Gegenstände", "Berichte"], 4, 6),
+  module("history-daily-life", "history", "target", "Alltag früher", ["Schule", "Arbeit", "Wohnen", "Kindheit"], 3, 6),
+  module("history-eras", "history", "bar", "Epochen-Reise", ["Steinzeit", "Antike", "Mittelalter", "Neuzeit"], 5, 6),
+  module("geography-map", "geography", "ruler", "Geografie", ["Karten", "Länder", "Klima", "Maßstab"], 3, 6),
+  module("geography-orientation", "geography", "ruler", "Karten & Orientierung", ["Himmelsrichtungen", "Legende", "Planquadrate", "Kartenzeichen"], 3, 6),
+  module("geography-germany", "geography", "book", "Deutschland", ["Bundesländer", "Städte", "Flüsse", "Landschaften"], 3, 6),
+  module("geography-europe", "geography", "book", "Europa", ["Länder", "Hauptstädte", "Nachbarn", "Regionen"], 4, 6),
+  module("geography-scale", "geography", "ruler", "Maßstab", ["Entfernungen", "Kartenmaßstab", "Vergleichen", "Einheiten"], 5, 6),
+  module("geography-climate", "geography", "bar", "Klima & Räume", ["Klimazonen", "Wetterkarten", "Landschaften", "Anpassung"], 4, 6),
+  module("coding-logic", "computer-science", "brain", "Informatik-Grundlagen", ["Muster", "Logik", "Algorithmen", "Daten"], 3, 6),
+  module("cs-patterns", "computer-science", "brain", "Muster & Logik", ["Folgen", "Bedingungen", "Wahr/Falsch", "Regeln"], 3, 6),
+  module("cs-algorithms", "computer-science", "target", "Algorithmen", ["Schritte", "Schleifen", "Bedingungen", "Debugging"], 3, 6),
+  module("cs-data", "computer-science", "bar", "Daten verstehen", ["Tabellen", "Sortieren", "Codieren", "Datenschutz"], 4, 6),
+  module("cs-binary", "computer-science", "brain", "Binärzahlen", ["Bits", "Zweiersystem", "Codierung", "Umwandeln"], 5, 6),
 ];
 
 export const missions = [
@@ -135,11 +65,37 @@ export const missions = [
   mission("koordinaten-karte", "coordinates", "Koordinaten-Karte", "Punkte lesen, Wege finden und Abstände bestimmen.", "Karten-Profi", "(x|y)", 5, 10, 9),
   mission("statistik-studio", "statistics", "Statistik-Studio", "Tabellen, Diagramme und Mittelwerte verstehen.", "Daten-Profi", "▥", 4, 10, 10),
   mission("wort-werkstatt", "german-language", "Wort-Werkstatt", "Wortarten, Rechtschreibung, Satzglieder und Lesen.", "Sprach-Profi", "Aa", 1, 10, 11),
-  mission("english-quest", "english-basics", "English Quest", "Vokabeln, einfache Sätze und kurze Texte verstehen.", "Word Hero", "EN", 1, 10, 12),
-  mission("natur-labor", "science-world", "Natur-Labor", "Körper, Pflanzen, Wetter, Energie und Experimente verstehen.", "Natur-Profi", "⚗", 1, 10, 13),
-  mission("zeitreise", "history-time", "Zeitreise", "Epochen, Quellen und Ereignisse in Reihenfolge bringen.", "Zeit-Profi", "⌛", 5, 10, 14),
-  mission("karten-kompass", "geography-map", "Karten-Kompass", "Karten, Länder, Himmelsrichtungen und Maßstab üben.", "Karten-Profi", "⌖", 3, 10, 15),
-  mission("code-knacker", "coding-logic", "Code-Knacker", "Muster, Logik, Daten und Algorithmen verstehen.", "Logik-Profi", "01", 3, 10, 16),
+  mission("rechtschreib-agent", "german-spelling", "Rechtschreib-Agent", "Merkwörter, Dehnung und häufige Fehler sicher erkennen.", "Fehler-Finder", "Aa", 1, 6, 12),
+  mission("grammatik-labor", "german-grammar", "Grammatik-Labor", "Wortarten, Satzglieder und Zeitformen untersuchen.", "Grammatik-Profi", "S", 2, 6, 13),
+  mission("zeichen-detektiv", "german-punctuation", "Zeichen-Detektiv", "Satzzeichen, Kommas und wörtliche Rede üben.", "Zeichen-Profi", "?!", 3, 6, 14),
+  mission("lese-detektiv", "german-reading", "Lese-Detektiv", "Kurze Texte verstehen, Details finden und Schlüsse ziehen.", "Lese-Profi", "📖", 2, 6, 15),
+  mission("english-quest", "english-basics", "English Quest", "Vokabeln, einfache Sätze und kurze Texte verstehen.", "Word Hero", "EN", 1, 6, 16),
+  mission("vocabulary-quest", "english-vocabulary", "Vocabulary Quest", "Alltagswörter sicher verstehen und anwenden.", "Word Champion", "EN", 1, 6, 17),
+  mission("grammar-base", "english-grammar", "Grammar Base", "Einfache englische Sätze, Fragen und Verneinungen bauen.", "Grammar Hero", "is", 3, 6, 18),
+  mission("dialog-training", "english-dialogues", "Dialog-Training", "Fragen und Antworten in Alltagssituationen ergänzen.", "Talk-Profi", "Hi", 3, 6, 19),
+  mission("reading-corner", "english-reading", "Reading Corner", "Kurze englische Texte lesen und verstehen.", "Reading Hero", "EN", 4, 6, 20),
+  mission("natur-labor", "science-world", "Natur-Labor", "Körper, Pflanzen, Wetter, Energie und Experimente verstehen.", "Natur-Profi", "⚗", 1, 6, 21),
+  mission("koerper-check", "science-body", "Körper-Check", "Organe, Sinne, Ernährung und Bewegung verstehen.", "Körper-Profi", "♥", 1, 6, 22),
+  mission("pflanzen-tierwelt", "science-animals", "Pflanzen & Tierwelt", "Lebensräume, Pflanzenteile und Nahrungsketten ordnen.", "Natur-Forscher", "🌱", 1, 6, 23),
+  mission("wetter-station", "science-weather", "Wetter-Station", "Wetter messen, Wasserkreislauf und Jahreszeiten erklären.", "Wetter-Profi", "☁", 2, 6, 24),
+  mission("energie-labor", "science-energy", "Energie-Labor", "Strom, Licht, Wärme und Versuchsschritte verstehen.", "Energie-Forscher", "⚡", 3, 6, 25),
+  mission("weltall-reise", "science-space", "Weltall-Reise", "Erde, Mond, Planeten und Tag/Nacht erforschen.", "Weltall-Profi", "☾", 4, 6, 26),
+  mission("zeitreise", "history-time", "Zeitreise", "Epochen, Quellen und Ereignisse in Reihenfolge bringen.", "Zeit-Profi", "⌛", 3, 6, 27),
+  mission("zeitstrahl-profi", "history-timeline", "Zeitstrahl-Profi", "Früher, später und Jahrhunderte sicher einordnen.", "Chronologie-Profi", "⌛", 3, 6, 28),
+  mission("quellen-forscher", "history-sources", "Quellen-Forscher", "Historische Quellen erkennen und auswerten.", "Quellen-Profi", "✉", 4, 6, 29),
+  mission("alltag-frueher", "history-daily-life", "Alltag früher", "Schule, Wohnen und Kindheit früher mit heute vergleichen.", "Alltags-Historiker", "🏠", 3, 6, 30),
+  mission("epochen-reise", "history-eras", "Epochen-Reise", "Steinzeit, Antike, Mittelalter und Neuzeit unterscheiden.", "Epochen-Profi", "🏛", 5, 6, 31),
+  mission("karten-kompass", "geography-map", "Karten-Kompass", "Karten, Länder, Himmelsrichtungen und Maßstab üben.", "Karten-Profi", "⌖", 3, 6, 32),
+  mission("orientierungs-profi", "geography-orientation", "Orientierungs-Profi", "Himmelsrichtungen, Legenden und Kartenzeichen nutzen.", "Kompass-Profi", "N", 3, 6, 33),
+  mission("deutschland-tour", "geography-germany", "Deutschland-Tour", "Bundesländer, Städte, Flüsse und Landschaften kennen.", "Deutschland-Profi", "DE", 3, 6, 34),
+  mission("europa-reise", "geography-europe", "Europa-Reise", "Länder, Hauptstädte und Nachbarn Europas üben.", "Europa-Profi", "EU", 4, 6, 35),
+  mission("massstab-meister", "geography-scale", "Maßstab-Meister", "Entfernungen auf Karten berechnen und vergleichen.", "Maßstab-Profi", "km", 5, 6, 36),
+  mission("klima-forscher", "geography-climate", "Klima-Forscher", "Klimazonen, Landschaften und Wetterkarten verstehen.", "Klima-Profi", "☀", 4, 6, 37),
+  mission("code-knacker", "coding-logic", "Code-Knacker", "Muster, Logik, Daten und Algorithmen verstehen.", "Logik-Profi", "01", 3, 6, 38),
+  mission("muster-logik", "cs-patterns", "Muster & Logik", "Folgen, Bedingungen und Wahr/Falsch-Regeln erkennen.", "Logik-Champion", "◧", 3, 6, 39),
+  mission("algorithmus-pfad", "cs-algorithms", "Algorithmus-Pfad", "Schritte sortieren, Schleifen verstehen und Fehler finden.", "Algorithmus-Profi", "↻", 3, 6, 40),
+  mission("daten-detektiv", "cs-data", "Daten-Detektiv", "Daten ordnen, Tabellen lesen und Codes verstehen.", "Daten-Profi", "▦", 4, 6, 41),
+  mission("binary-bits", "cs-binary", "Binary Bits", "Bits und Binärzahlen in einfache Zahlen umwandeln.", "Bit-Profi", "01", 5, 6, 42),
 ];
 
 export const skillLabels = {
@@ -176,27 +132,50 @@ export const skillLabels = {
   "table-sum": "Tabellensumme",
   range: "Spannweite",
   mean: "Mittelwert",
+  "number-line": "Zahlenstrahl",
+  "math-pyramid": "Rechenmauer",
+  "chart-read": "Diagramm lesen",
   spelling: "Rechtschreibung",
   "parts-of-speech": "Wortarten",
   "sentence-parts": "Satzglieder",
   "reading-main-idea": "Leseverständnis",
+  punctuation: "Zeichensetzung",
+  "direct-speech": "Wörtliche Rede",
+  "spelling-error": "Fehler finden",
+  "reading-detail": "Textdetails",
+  "reading-inference": "Schlussfolgern",
   vocabulary: "Vokabeln",
   translation: "Übersetzen",
   "sentence-order": "Satzbau",
+  "english-dialogue": "Dialog ergänzen",
+  "english-question": "Frage bilden",
+  "english-reading-detail": "Leseverständnis Englisch",
   "body-systems": "Körperwissen",
   "plants-animals": "Tiere und Pflanzen",
+  "plant-parts": "Pflanzenteile",
+  "food-chain": "Nahrungskette",
   weather: "Wetter",
+  "water-cycle": "Wasserkreislauf",
   energy: "Energie",
+  experiment: "Experiment verstehen",
+  space: "Erde und Weltall",
   timeline: "Zeitstrahl",
+  century: "Jahrhundert",
   sources: "Quellen",
   eras: "Epochen",
+  "daily-life": "Alltag früher",
   maps: "Karten lesen",
   countries: "Länderwissen",
+  "federal-states": "Bundesländer",
+  europe: "Europa",
   compass: "Himmelsrichtungen",
   scale: "Maßstab",
+  climate: "Klima",
   patterns: "Muster",
   logic: "Logik",
   algorithms: "Algorithmen",
+  debugging: "Fehler im Ablauf finden",
+  data: "Daten verstehen",
   binary: "Binärzahlen",
 };
 
@@ -233,10 +212,18 @@ export const errorTypeLabels = {
   reading: "Leseverständnis",
   vocabulary: "Wortschatz",
   translation: "Übersetzen",
+  punctuation: "Zeichensetzung",
   science: "Naturwissen",
+  experiment: "Versuchsverständnis",
   timeline: "Zeitstrahl",
+  sources: "Quellen",
+  eras: "Epochen",
   geography: "Geografie",
+  scale: "Maßstab",
+  climate: "Klima",
   logic: "Logik",
+  algorithm: "Algorithmus",
+  data: "Daten",
 };
 
 export function skillLabel(skillId) {
@@ -249,14 +236,40 @@ export function errorTypeLabel(errorType) {
 
 export const topics = [
   topic("math-arithmetic", "math", "arithmetic", "Zahlen & Rechnen", 1, 6),
-  topic("math-geometry", "math", "geometry", "Geometrie & Messen", 2, 10),
-  topic("math-data", "math", "statistics", "Daten & Diagramme", 4, 10),
-  topic("de-language", "german", "german-language", "Sprache untersuchen", 1, 10),
-  topic("en-basics", "english", "english-basics", "Englisch verstehen", 1, 10),
-  topic("science-basics", "science", "science-world", "Natur erforschen", 1, 10),
-  topic("history-basics", "history", "history-time", "Zeit verstehen", 5, 10),
-  topic("geo-basics", "geography", "geography-map", "Räume verstehen", 3, 10),
-  topic("cs-basics", "computer-science", "coding-logic", "Logisch denken", 3, 10),
+  topic("math-geometry", "math", "geometry", "Geometrie & Messen", 2, 6),
+  topic("math-data", "math", "statistics", "Daten & Diagramme", 4, 6),
+  topic("de-language", "german", "german-language", "Sprache untersuchen", 1, 6),
+  topic("de-spelling", "german", "german-spelling", "Richtig schreiben", 1, 6),
+  topic("de-grammar", "german", "german-grammar", "Grammatik verstehen", 2, 6),
+  topic("de-punctuation", "german", "german-punctuation", "Zeichen setzen", 3, 6),
+  topic("de-reading", "german", "german-reading", "Texte verstehen", 2, 6),
+  topic("en-basics", "english", "english-basics", "Englisch verstehen", 1, 6),
+  topic("en-vocabulary", "english", "english-vocabulary", "Wörter verstehen", 1, 6),
+  topic("en-grammar", "english", "english-grammar", "Sätze bauen", 3, 6),
+  topic("en-dialogues", "english", "english-dialogues", "Dialoge führen", 3, 6),
+  topic("en-reading", "english", "english-reading", "Englische Texte lesen", 4, 6),
+  topic("science-basics", "science", "science-world", "Natur erforschen", 1, 6),
+  topic("science-body-topic", "science", "science-body", "Körper & Gesundheit", 1, 6),
+  topic("science-animals-topic", "science", "science-animals", "Tiere & Pflanzen", 1, 6),
+  topic("science-weather-topic", "science", "science-weather", "Wetter & Klima", 2, 6),
+  topic("science-energy-topic", "science", "science-energy", "Energie & Experimente", 3, 6),
+  topic("science-space-topic", "science", "science-space", "Erde & Weltall", 4, 6),
+  topic("history-basics", "history", "history-time", "Zeit verstehen", 3, 6),
+  topic("history-timeline-topic", "history", "history-timeline", "Zeitstrahl nutzen", 3, 6),
+  topic("history-sources-topic", "history", "history-sources", "Quellen untersuchen", 4, 6),
+  topic("history-daily-topic", "history", "history-daily-life", "Alltag früher", 3, 6),
+  topic("history-eras-topic", "history", "history-eras", "Epochen kennen", 5, 6),
+  topic("geo-basics", "geography", "geography-map", "Räume verstehen", 3, 6),
+  topic("geo-orientation", "geography", "geography-orientation", "Karten lesen", 3, 6),
+  topic("geo-germany", "geography", "geography-germany", "Deutschland kennen", 3, 6),
+  topic("geo-europe", "geography", "geography-europe", "Europa kennen", 4, 6),
+  topic("geo-scale", "geography", "geography-scale", "Maßstab nutzen", 5, 6),
+  topic("geo-climate", "geography", "geography-climate", "Klima verstehen", 4, 6),
+  topic("cs-basics", "computer-science", "coding-logic", "Logisch denken", 3, 6),
+  topic("cs-patterns-topic", "computer-science", "cs-patterns", "Muster & Logik", 3, 6),
+  topic("cs-algorithms-topic", "computer-science", "cs-algorithms", "Algorithmen bauen", 3, 6),
+  topic("cs-data-topic", "computer-science", "cs-data", "Daten verstehen", 4, 6),
+  topic("cs-binary-topic", "computer-science", "cs-binary", "Binärzahlen", 5, 6),
 ];
 
 export const taskTemplates = [
@@ -291,7 +304,7 @@ export const taskTemplates = [
       ["Haus", "Nomen", "Namenwort"],
       ["unter", "Präposition", "Verhältniswort"],
     ]);
-    return task(`Welche Wortart hat "${item[0]}"?`, item[1], [`Frage dich, was das Wort leistet.`, `${item[0]} ist ein ${item[2]}.`, `Die richtige Wortart ist ${item[1]}.`], [item[2]]);
+    return task(`Welche Wortart hat "${item[0]}"?`, item[1], [`Frage dich, was das Wort leistet.`, `${item[0]} ist ein ${item[2]}.`, `Die richtige Wortart ist ${item[1]}.`], [item[2]], ["Nomen", "Verb", "Adjektiv", "Präposition"]);
   }),
   template("tpl-german-spelling", "german", "german-language", "de-language", "spelling", "Rechtschreibung", "text", 1, 10, "Aa", "spelling", () => {
     const item = randomPick([["Fahrrad", "Fahrad"], ["nämlich", "nemlich"], ["Rhythmus", "Rythmus"], ["Schlüssel", "Schlüsel"]]);
@@ -305,13 +318,29 @@ export const taskTemplates = [
     const item = randomPick([["I like apples.", "Ich mag Äpfel."], ["She plays football.", "Sie spielt Fußball."], ["We are friends.", "Wir sind Freunde."]]);
     return task(`Übersetze: ${item[1]}`, item[0], ["Beginne mit dem Subjekt.", "Im Englischen folgt danach meist das Verb.", `Eine passende Übersetzung ist: ${item[0]}`]);
   }),
+  template("tpl-english-vocabulary-deep", "english", "english-vocabulary", "en-vocabulary", "vocabulary", "Vocabulary Quest", "text", 1, 6, "EN", "vocabulary", () => {
+    const item = randomPick([["Tisch", "table"], ["Buch", "book"], ["rot", "red"], ["spielen", "play"], ["Mutter", "mother"], ["Fenster", "window"]]);
+    return task(`Wie heißt "${item[0]}" auf Englisch?`, item[1], ["Denke an Grundwörter aus Alltag und Schule.", `Das deutsche Wort ist ${item[0]}.`, `${item[0]} heißt auf Englisch ${item[1]}.`]);
+  }),
   template("tpl-science-body", "science", "science-world", "science-basics", "body-systems", "Körperwissen", "text", 1, 10, "⚗", "science", () => {
     const item = randomPick([["Welches Organ pumpt Blut durch den Körper?", "Herz"], ["Womit atmen Menschen?", "Lunge"], ["Welches Sinnesorgan nutzt du zum Hören?", "Ohr"]]);
     return task(item[0], item[1], ["Denke an die Aufgabe des Organs.", "Ordne Funktion und Körperteil zu.", `Die Antwort ist: ${item[1]}.`]);
   }),
+  template("tpl-science-body-deep", "science", "science-body", "science-body-topic", "body-systems", "Körper & Gesundheit", "multiple-choice", 1, 6, "♥", "science", () => {
+    const item = randomPick([
+      ["Welches Organ pumpt Blut durch den Körper?", "Herz", ["Herz", "Magen", "Ohr"]],
+      ["Welches Sinnesorgan nutzt du zum Hören?", "Ohr", ["Ohr", "Auge", "Zunge"]],
+      ["Was hilft dem Körper beim Wachsen und Gesundbleiben?", "ausgewogene Ernährung", ["ausgewogene Ernährung", "nur Süßigkeiten", "nie schlafen"]],
+    ]);
+    return task(item[0], item[1], ["Denke an die Aufgabe im Körper.", "Ordne Funktion und Körperteil zu.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
   template("tpl-science-weather", "science", "science-world", "science-basics", "weather", "Wetter", "multiple-choice", 1, 10, "☁", "science", () => {
-    const item = randomPick([["Welches Gerät misst Temperatur?", "Thermometer"], ["Welches Gerät misst Windrichtung?", "Windfahne"], ["Was entsteht aus verdunstetem Wasser in der Höhe?", "Wolken"]]);
-    return task(item[0], item[1], ["Suche das passende Wetterwort.", "Denke an Messen und Beobachten.", `Richtig ist: ${item[1]}.`]);
+    const item = randomPick([
+      ["Welches Gerät misst Temperatur?", "Thermometer", ["Thermometer", "Windfahne", "Lineal"]],
+      ["Welches Gerät misst Windrichtung?", "Windfahne", ["Windfahne", "Thermometer", "Waage"]],
+      ["Was entsteht aus verdunstetem Wasser in der Höhe?", "Wolken", ["Wolken", "Steine", "Sand"]],
+    ]);
+    return task(item[0], item[1], ["Suche das passende Wetterwort.", "Denke an Messen und Beobachten.", `Richtig ist: ${item[1]}.`], [], item[2]);
   }),
   template("tpl-history-timeline", "history", "history-time", "history-basics", "timeline", "Zeitstrahl", "text", 5, 10, "⌛", "timeline", () => {
     const item = randomPick([["Was kommt früher: Mittelalter oder Neuzeit?", "Mittelalter"], ["Was kommt früher: Steinzeit oder Römerzeit?", "Steinzeit"], ["Was kommt später: Antike oder Mittelalter?", "Mittelalter"]]);
@@ -341,6 +370,218 @@ export const taskTemplates = [
     const item = randomPick([["10", 2], ["11", 3], ["100", 4], ["101", 5], ["110", 6]]);
     return task(`Welche Dezimalzahl ist die Binärzahl ${item[0]}?`, item[1], ["Binärzahlen nutzen Zweierstellen.", "Lies von rechts: 1, 2, 4, 8 ...", `${item[0]} entspricht ${item[1]}.`]);
   }),
+  template("tpl-number-line", "math", "arithmetic", "math-arithmetic", "number-line", "Zahlenstrahl", "number", 1, 6, "↔", "Rechenfehler", ({ grade }) => {
+    const step = grade <= 2 ? 2 : grade <= 4 ? 5 : 25;
+    const start = randomInt(0, grade <= 2 ? 20 : 200);
+    const jumps = randomInt(2, 5);
+    const answer = start + step * jumps;
+    return task(`Am Zahlenstrahl startest du bei ${start} und gehst ${jumps} Sprünge zu je ${step} weiter. Wo landest du?`, answer, [`Ein Sprung ist ${step}.`, `Rechne ${jumps} mal ${step} und addiere zu ${start}.`, `Du landest bei ${answer}.`]);
+  }),
+  template("tpl-math-pyramid", "math", "arithmetic", "math-arithmetic", "math-pyramid", "Rechenmauer", "number", 2, 6, "▵", "Rechenfehler", ({ grade }) => {
+    const a = randomInt(2, grade <= 3 ? 12 : 40);
+    const b = randomInt(2, grade <= 3 ? 12 : 40);
+    const c = randomInt(2, grade <= 3 ? 12 : 40);
+    const answer = a + 2 * b + c;
+    return task(`Rechenmauer: unten stehen ${a}, ${b}, ${c}. Jeder Stein ist die Summe der zwei darunter. Welche Zahl steht oben?`, answer, [`Berechne zuerst ${a} + ${b} und ${b} + ${c}.`, "Die obere Zahl ist die Summe der beiden mittleren Steine.", `Oben steht ${answer}.`]);
+  }),
+  template("tpl-chart-read", "math", "statistics", "math-data", "chart-read", "Diagramm lesen", "number", 4, 6, "▥", "Diagrammlesen", () => {
+    const labels = ["Montag", "Dienstag", "Mittwoch", "Donnerstag"];
+    const values = labels.map(() => randomInt(3, 18));
+    const maxIndex = values.indexOf(Math.max(...values));
+    return task(`Diagrammwerte: ${labels.map((label, index) => `${label} ${values[index]}`).join(", ")}. Wie viele Punkte hat der stärkste Tag?`, values[maxIndex], ["Suche den größten Wert.", `Der stärkste Tag ist ${labels[maxIndex]}.`, `Der größte Wert ist ${values[maxIndex]}.`]);
+  }),
+  template("tpl-decimal-place-deep", "math", "decimals", "math-arithmetic", "decimal-place", "Dezimalstellen", "number", 4, 6, "0,5", "Stellenwert", () => {
+    const hundredths = randomInt(1, 9);
+    const value = `${randomInt(1, 9)},${randomInt(1, 9)}${hundredths}`;
+    return task(`Welche Ziffer steht bei ${value} an der Hundertstelstelle?`, hundredths, ["Nach dem Komma kommt zuerst die Zehntelstelle.", "Die zweite Stelle nach dem Komma ist die Hundertstelstelle.", `Die Hundertstelziffer ist ${hundredths}.`]);
+  }),
+  template("tpl-percent-discount-deep", "math", "percent", "math-arithmetic", "discount", "Rabatt berechnen", "unit", 5, 6, "%", "percent-value", () => {
+    const base = randomPick([40, 60, 80, 100, 120]);
+    const percent = randomPick([10, 20, 25, 50]);
+    const answer = (base * percent) / 100;
+    return task(`Ein Artikel kostet ${base} €. Es gibt ${percent}% Rabatt. Wie viele Euro werden abgezogen?`, answer, [`Gesucht ist ${percent}% von ${base}.`, `Rechne ${base} mal ${percent} geteilt durch 100.`, `Der Rabatt beträgt ${answer} €.`], [`${answer} €`, `${answer} euro`]);
+  }),
+  template("tpl-measures-length-deep", "math", "measures", "math-geometry", "length", "Länge umwandeln", "unit", 2, 6, "m", "Einheiten", () => {
+    const meters = randomInt(2, 20);
+    const answer = meters * 100;
+    return task(`Wie viele Zentimeter sind ${meters} Meter?`, answer, ["Ein Meter hat 100 Zentimeter.", `Rechne ${meters} mal 100.`, `${meters} m sind ${answer} cm.`], [`${answer} cm`]);
+  }),
+  template("tpl-word-problem-model-deep", "math", "word-problems", "math-arithmetic", "model", "Rechenweg wählen", "number", 2, 6, "?", "Textverstaendnis", () => {
+    const groups = randomInt(3, 8);
+    const perGroup = randomInt(4, 9);
+    const answer = groups * perGroup;
+    return task(`${groups} Kinder bekommen jeweils ${perGroup} Karten. Wie viele Karten sind es zusammen?`, answer, ["Jeweils ist ein Hinweis auf Malrechnen.", `Rechne ${groups} mal ${perGroup}.`, `Zusammen sind es ${answer} Karten.`]);
+  }),
+  template("tpl-equation-deep", "math", "equations", "math-arithmetic", "linear", "Gleichung lösen", "number", 5, 6, "x", "Umformen", () => {
+    const x = randomInt(4, 30);
+    const add = randomInt(2, 15);
+    return task(`x + ${add} = ${x + add}. Wie groß ist x?`, x, ["Du willst x allein haben.", `Ziehe ${add} auf beiden Seiten ab.`, `x = ${x}.`], [`x=${x}`, `x = ${x}`]);
+  }),
+  template("tpl-coordinate-read-deep", "math", "coordinates", "math-data", "read-point", "Koordinaten lesen", "text", 5, 6, "(x|y)", "Koordinaten", () => {
+    const x = randomInt(0, 8);
+    const y = randomInt(0, 8);
+    return task(`Ein Punkt liegt ${x} Schritte nach rechts und ${y} Schritte nach oben. Wie lautet er als (x|y)?`, `(${x}|${y})`, ["Zuerst kommt die x-Koordinate.", "Danach kommt die y-Koordinate.", `Der Punkt lautet (${x}|${y}).`], [`${x}|${y}`, `(${x},${y})`]);
+  }),
+  template("tpl-german-find-error", "german", "german-spelling", "de-spelling", "spelling-error", "Rechtschreibfehler finden", "text", 1, 6, "Aa", "spelling", () => {
+    const item = randomPick([["Fahrrad", "Fahrad"], ["Sonne", "Sone"], ["Schlüssel", "Schlüsel"], ["kommen", "komen"]]);
+    return task(`In welchem Wort steckt der Fehler: "${item[0]}" oder "${item[1]}"?`, item[1], ["Vergleiche beide Wörter genau.", "Achte auf doppelte Buchstaben oder Merkwörter.", `Falsch geschrieben ist: ${item[1]}.`]);
+  }),
+  template("tpl-german-sentence-parts", "german", "german-grammar", "de-grammar", "sentence-parts", "Satzglieder bestimmen", "multiple-choice", 3, 6, "S", "grammar", () => {
+    const item = randomPick([
+      ["Mila liest ein Buch.", "Mila", "Subjekt", ["Subjekt", "Prädikat", "Objekt"]],
+      ["Der Hund schläft.", "schläft", "Prädikat", ["Subjekt", "Prädikat", "Objekt"]],
+      ["Tom findet den Ball.", "den Ball", "Objekt", ["Subjekt", "Prädikat", "Objekt"]],
+    ]);
+    return task(`Welche Satzglied-Rolle hat "${item[1]}" in: ${item[0]}`, item[2], ["Frage nach dem Satzglied.", "Wer oder was ist Subjekt, was geschieht ist Prädikat.", `Die richtige Rolle ist ${item[2]}.`], [], item[3]);
+  }),
+  template("tpl-german-punctuation", "german", "german-punctuation", "de-punctuation", "punctuation", "Satzzeichen wählen", "multiple-choice", 3, 6, "?!", "punctuation", () => {
+    const item = randomPick([
+      ["Wie spät ist es", "?", ["?", ".", "!"]],
+      ["Pass auf", "!", ["?", ".", "!"]],
+      ["Heute regnet es", ".", ["?", ".", "!"]],
+    ]);
+    return task(`Welches Satzzeichen passt am Ende: "${item[0]}"`, item[1], ["Frage, Aussage oder Ausruf?", "Fragen enden mit Fragezeichen, Ausrufe mit Ausrufezeichen.", `Richtig ist ${item[1]}`], [], item[2]);
+  }),
+  template("tpl-german-direct-speech", "german", "german-punctuation", "de-punctuation", "direct-speech", "Wörtliche Rede", "fill-blank", 4, 6, "„“", "punctuation", () => {
+    return task('Ergänze das fehlende Satzzeichen: Tom sagt: „Ich komme gleich__“', ".", ["Der Begleitsatz ist eine Aussage.", "Die wörtliche Rede endet als Aussagesatz.", "Es fehlt ein Punkt."], ["Punkt"]);
+  }),
+  template("tpl-german-reading-detail", "german", "german-reading", "de-reading", "reading-detail", "Textdetails finden", "text", 2, 6, "📖", "reading", () => {
+    const item = randomPick([
+      ["Lena packt Brot, Wasser und einen Apfel in ihren Rucksack. Danach geht sie zum Sportplatz.", "Was packt Lena zu trinken ein?", "Wasser"],
+      ["Im Garten blühen Tulpen. Neben dem Zaun steht eine rote Gießkanne.", "Welche Farbe hat die Gießkanne?", "rot"],
+    ]);
+    return task(`${item[0]} ${item[1]}`, item[2], ["Lies den kurzen Text noch einmal.", "Suche genau die Stelle mit der Information.", `Die Antwort ist ${item[2]}.`]);
+  }),
+  template("tpl-german-reading-inference", "german", "german-reading", "de-reading", "reading-inference", "Schlussfolgern", "multiple-choice", 3, 6, "📖", "reading", () => {
+    const item = randomPick([
+      ["Mara zieht Gummistiefel an und nimmt einen Schirm mit.", "Es regnet wahrscheinlich.", ["Es regnet wahrscheinlich.", "Es ist sehr heiß.", "Sie geht schwimmen."]],
+      ["Ben legt Lineal, Heft und Mäppchen in die Tasche.", "Er geht wahrscheinlich zur Schule.", ["Er geht wahrscheinlich zur Schule.", "Er kocht Mittagessen.", "Er schläft ein."]],
+    ]);
+    return task(`Was kann man schließen? ${item[0]}`, item[1], ["Nutze Hinweise aus dem Satz.", "Welche Situation passt am besten?", item[1]], [], item[2]);
+  }),
+  template("tpl-english-grammar-be", "english", "english-grammar", "en-grammar", "english-question", "to be einsetzen", "fill-blank", 3, 6, "is", "grammar", () => {
+    const item = randomPick([["I __ happy.", "am"], ["She __ my friend.", "is"], ["We __ in class.", "are"]]);
+    return task(`Setze am, is oder are ein: ${item[0]}`, item[1], ["Suche das Subjekt.", "I passt zu am, he/she/it zu is, we/you/they zu are.", `Richtig ist ${item[1]}.`], item[1] === "am" ? ["'m"] : []);
+  }),
+  template("tpl-english-dialogue", "english", "english-dialogues", "en-dialogues", "english-dialogue", "Dialog ergänzen", "multiple-choice", 3, 6, "Hi", "vocabulary", () => {
+    const item = randomPick([
+      ["Hello, how are you?", "I am fine.", ["I am fine.", "It is blue.", "She is ten."]],
+      ["What is your name?", "My name is Tom.", ["My name is Tom.", "I like apples.", "It is raining."]],
+    ]);
+    return task(`Welche Antwort passt? ${item[0]}`, item[1], ["Achte auf die Frage.", "Die Antwort muss inhaltlich passen.", `Passend ist: ${item[1]}`], [], item[2]);
+  }),
+  template("tpl-english-reading-detail", "english", "english-reading", "en-reading", "english-reading-detail", "Englischen Text verstehen", "text", 4, 6, "EN", "reading", () => {
+    const item = randomPick([
+      ["Tom has a red bike. He rides to school.", "What color is the bike?", "red"],
+      ["Anna likes cats and apples. Her cat is black.", "Which animal does Anna like?", "cats"],
+    ]);
+    return task(`${item[0]} ${item[1]}`, item[2], ["Read the short text again.", "Look for the exact word.", `The answer is ${item[2]}.`]);
+  }),
+  template("tpl-science-plant-parts", "science", "science-animals", "science-animals-topic", "plant-parts", "Pflanzenteile", "multiple-choice", 1, 6, "🌱", "science", () => {
+    const item = randomPick([
+      ["Welcher Pflanzenteil nimmt Wasser aus dem Boden auf?", "Wurzel", ["Wurzel", "Blüte", "Frucht"]],
+      ["Welcher Pflanzenteil bildet oft Samen?", "Blüte", ["Wurzel", "Blüte", "Stängel"]],
+    ]);
+    return task(item[0], item[1], ["Denke an die Aufgabe des Pflanzenteils.", "Wurzel, Stängel, Blatt und Blüte haben verschiedene Aufgaben.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-science-food-chain", "science", "science-animals", "science-animals-topic", "food-chain", "Nahrungskette", "ordering", 3, 6, "🌱", "science", () => {
+    return task("Ordne die Nahrungskette: Fuchs, Gras, Hase. Beginne mit der Pflanze.", "Gras > Hase > Fuchs", ["Pflanzen stehen am Anfang.", "Der Hase frisst Gras, der Fuchs jagt den Hasen.", "Richtig: Gras > Hase > Fuchs."], ["Gras,Hase,Fuchs", "Gras Hase Fuchs"]);
+  }),
+  template("tpl-science-water-cycle", "science", "science-weather", "science-weather-topic", "water-cycle", "Wasserkreislauf", "multiple-choice", 2, 6, "☁", "science", () => {
+    const item = randomPick([
+      ["Was passiert, wenn Wasser durch Wärme gasförmig wird?", "Verdunstung", ["Verdunstung", "Gefrieren", "Schmelzen"]],
+      ["Wie nennt man Wasser, das aus Wolken fällt?", "Niederschlag", ["Niederschlag", "Schatten", "Erdkern"]],
+    ]);
+    return task(item[0], item[1], ["Denke an den Weg des Wassers.", "Wasser verdunstet, bildet Wolken und fällt als Niederschlag.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-science-experiment", "science", "science-energy", "science-energy-topic", "experiment", "Experiment verstehen", "multiple-choice", 3, 6, "⚡", "experiment", () => {
+    const item = randomPick([
+      ["Warum verändert man in einem fairen Versuch immer nur eine Sache?", "Damit man die Ursache erkennt.", ["Damit man die Ursache erkennt.", "Damit es schneller geht.", "Damit man nichts messen muss."]],
+      ["Was brauchst du, um eine Vermutung zu prüfen?", "Beobachtung und Messung", ["Beobachtung und Messung", "Nur Glück", "Eine Landkarte"]],
+    ]);
+    return task(item[0], item[1], ["Ein Experiment soll eine Frage klären.", "Wenn zu viel gleichzeitig verändert wird, bleibt die Ursache unklar.", item[1]], [], item[2]);
+  }),
+  template("tpl-science-space", "science", "science-space", "science-space-topic", "space", "Erde und Weltall", "multiple-choice", 4, 6, "☾", "science", () => {
+    const item = randomPick([
+      ["Warum gibt es Tag und Nacht?", "Die Erde dreht sich.", ["Die Erde dreht sich.", "Der Mond leuchtet.", "Die Sonne geht aus."]],
+      ["Was umkreist die Erde?", "der Mond", ["der Mond", "der Mars", "ein Kompass"]],
+    ]);
+    return task(item[0], item[1], ["Denke an Bewegungen im Weltall.", "Die Erde dreht sich, der Mond umkreist die Erde.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-history-century", "history", "history-timeline", "history-timeline-topic", "century", "Jahrhundert erkennen", "number", 4, 6, "⌛", "timeline", () => {
+    const year = randomPick([1450, 1789, 1914, 2020]);
+    const answer = Math.floor((year - 1) / 100) + 1;
+    return task(`In welchem Jahrhundert liegt das Jahr ${year}?`, answer, ["Die Jahre 1-100 sind das 1. Jahrhundert.", "Rechne grob: Jahr durch 100 und aufrunden.", `${year} liegt im ${answer}. Jahrhundert.`], [`${answer}. Jahrhundert`]);
+  }),
+  template("tpl-history-source-type", "history", "history-sources", "history-sources-topic", "sources", "Quelle erkennen", "multiple-choice", 4, 6, "✉", "sources", () => {
+    const item = randomPick([
+      ["Ein Brief aus dem Jahr 1910 ist ...", "schriftliche Quelle", ["schriftliche Quelle", "Himmelsrichtung", "Klimazone"]],
+      ["Ein alter Krug aus einer Ausgrabung ist ...", "Sachquelle", ["Sachquelle", "Satzzeichen", "Bundesland"]],
+    ]);
+    return task(item[0], item[1], ["Quellen sind Spuren aus der Vergangenheit.", "Unterscheide Texte, Bilder und Gegenstände.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-history-daily-life", "history", "history-daily-life", "history-daily-topic", "daily-life", "Alltag vergleichen", "multiple-choice", 3, 6, "🏠", "eras", () => {
+    const item = randomPick([
+      ["Was gab es in Schulen früher oft statt Tablets?", "Schiefertafeln", ["Schiefertafeln", "Raumschiffe", "Smartwatches"]],
+      ["Was war früher häufiger als heute?", "Wäsche mit der Hand waschen", ["Wäsche mit der Hand waschen", "Online-Unterricht", "E-Mails schreiben"]],
+    ]);
+    return task(item[0], item[1], ["Vergleiche Alltag früher und heute.", "Technik und Arbeit haben sich verändert.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-history-eras", "history", "history-eras", "history-eras-topic", "eras", "Epochen ordnen", "ordering", 5, 6, "🏛", "eras", () => {
+    return task("Ordne von früh nach spät: Mittelalter, Steinzeit, Neuzeit.", "Steinzeit > Mittelalter > Neuzeit", ["Die Steinzeit ist sehr früh.", "Das Mittelalter liegt vor der Neuzeit.", "Richtig: Steinzeit > Mittelalter > Neuzeit."], ["Steinzeit,Mittelalter,Neuzeit", "Steinzeit Mittelalter Neuzeit"]);
+  }),
+  template("tpl-geo-map-symbols", "geography", "geography-orientation", "geo-orientation", "maps", "Kartenzeichen", "multiple-choice", 3, 6, "⌖", "geography", () => {
+    const item = randomPick([
+      ["Wo erklärt eine Karte ihre Zeichen?", "Legende", ["Legende", "Titelbild", "Rechenmauer"]],
+      ["Welche Farbe steht auf Karten oft für Wasser?", "blau", ["blau", "rot", "schwarz"]],
+    ]);
+    return task(item[0], item[1], ["Karten haben Zeichen und Farben.", "Die Legende erklärt die Zeichen.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-geo-federal-states", "geography", "geography-germany", "geo-germany", "federal-states", "Bundesländer", "text", 3, 6, "DE", "geography", () => {
+    const item = randomPick([["München", "Bayern"], ["Hannover", "Niedersachsen"], ["Dresden", "Sachsen"]]);
+    return task(`Zu welchem Bundesland gehört ${item[0]}?`, item[1], ["Denke an bekannte Landeshauptstädte.", `${item[0]} ist Hauptstadt oder wichtige Stadt in ${item[1]}.`, `Richtig ist ${item[1]}.`]);
+  }),
+  template("tpl-geo-europe", "geography", "geography-europe", "geo-europe", "europe", "Europa", "text", 4, 6, "EU", "geography", () => {
+    const item = randomPick([["Paris", "Frankreich"], ["Rom", "Italien"], ["Madrid", "Spanien"], ["Wien", "Österreich"]]);
+    return task(`In welchem Land liegt ${item[0]}?`, item[1], ["Ordne die Hauptstadt dem Land zu.", "Nutze bekannte Hauptstädte Europas.", `${item[0]} liegt in ${item[1]}.`]);
+  }),
+  template("tpl-geo-scale-deep", "geography", "geography-scale", "geo-scale", "scale", "Maßstab vertiefen", "unit", 5, 6, "km", "scale", () => {
+    const cm = randomInt(2, 9);
+    const factor = randomPick([2, 5, 10]);
+    const answer = cm * factor;
+    return task(`Auf einer Karte entsprechen 1 cm genau ${factor} km. Wie viele Kilometer sind ${cm} cm?`, answer, ["Multipliziere Kartenlänge mit dem Maßstabswert.", `Rechne ${cm} mal ${factor}.`, `${cm} cm entsprechen ${answer} km.`], [`${answer} km`]);
+  }),
+  template("tpl-geo-climate", "geography", "geography-climate", "geo-climate", "climate", "Klima verstehen", "multiple-choice", 4, 6, "☀", "climate", () => {
+    const item = randomPick([
+      ["Wo ist es meist sehr trocken?", "Wüste", ["Wüste", "Regenwald", "Nordsee"]],
+      ["Wo wachsen besonders viele Pflanzen wegen Wärme und Regen?", "Regenwald", ["Regenwald", "Gletscher", "Parkplatz"]],
+    ]);
+    return task(item[0], item[1], ["Denke an Temperatur und Niederschlag.", "Klima prägt Landschaften.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-cs-logic", "computer-science", "cs-patterns", "cs-patterns-topic", "logic", "Logik", "multiple-choice", 3, 6, "◧", "logic", () => {
+    const item = randomPick([
+      ["Aussage: Alle roten Formen werden markiert. Ein blaues Quadrat ist ...", "nicht markiert", ["markiert", "nicht markiert", "immer rot"]],
+      ["Wenn es regnet, nimm den Schirm. Es regnet. Was tust du?", "Schirm nehmen", ["Schirm nehmen", "Schirm wegwerfen", "nichts prüfen"]],
+    ]);
+    return task(item[0], item[1], ["Achte auf die Bedingung.", "Wenn die Bedingung gilt, folgt die Aktion.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-cs-algorithm-order", "computer-science", "cs-algorithms", "cs-algorithms-topic", "algorithms", "Schritte sortieren", "ordering", 3, 6, "↻", "algorithm", () => {
+    return task("Ordne den Ablauf zum Zähneputzen: ausspucken, Zahnpasta auftragen, bürsten.", "Zahnpasta auftragen > bürsten > ausspucken", ["Ein Algorithmus ist eine sinnvolle Reihenfolge.", "Erst vorbereiten, dann ausführen, dann beenden.", "Richtig: Zahnpasta auftragen > bürsten > ausspucken."], ["Zahnpasta auftragen,bürsten,ausspucken", "Zahnpasta auftragen bürsten ausspucken"]);
+  }),
+  template("tpl-cs-debugging", "computer-science", "cs-algorithms", "cs-algorithms-topic", "debugging", "Fehler finden", "multiple-choice", 4, 6, "↻", "algorithm", () => {
+    const item = randomPick([
+      ["Roboter soll vorwärts gehen, dann rechts abbiegen. Programm: rechts, vorwärts. Was ist falsch?", "Reihenfolge", ["Reihenfolge", "Farbe", "Rechtschreibung"]],
+      ["Eine Schleife soll 3-mal laufen, läuft aber 30-mal. Was prüfst du?", "Wiederholungszahl", ["Wiederholungszahl", "Landkarte", "Satzzeichen"]],
+    ]);
+    return task(item[0], item[1], ["Debugging heißt Fehler suchen.", "Prüfe Reihenfolge, Bedingung oder Wiederholung.", `Richtig ist ${item[1]}.`], [], item[2]);
+  }),
+  template("tpl-cs-data-sort", "computer-science", "cs-data", "cs-data-topic", "data", "Daten sortieren", "ordering", 4, 6, "▦", "data", () => {
+    return task("Sortiere die Zahlen aufsteigend: 8, 3, 5.", "3 > 5 > 8", ["Aufsteigend heißt klein nach groß.", "Suche zuerst die kleinste Zahl.", "Richtig: 3 > 5 > 8."], ["3,5,8", "3 5 8"]);
+  }),
+  template("tpl-cs-binary-deep", "computer-science", "cs-binary", "cs-binary-topic", "binary", "Binärzahlen vertiefen", "number", 5, 6, "01", "logic", () => {
+    const item = randomPick([["111", 7], ["1000", 8], ["1001", 9], ["1010", 10]]);
+    return task(`Welche Dezimalzahl ist die Binärzahl ${item[0]}?`, item[1], ["Nutze Zweierstellen.", "Von rechts zählen die Stellen 1, 2, 4, 8.", `${item[0]} entspricht ${item[1]}.`]);
+  }),
 ];
 
 export const fixedTests = [
@@ -367,14 +608,18 @@ export const fixedTests = [
     ],
   },
   {
-    id: "abschluss-sek1",
-    title: "Sek I Check",
-    gradeRange: "7-10",
+    id: "faecher-check-klasse-6",
+    title: "Fächer-Check Klasse 6",
+    gradeRange: "5-6",
     questions: [
       makeStaticQuestion("equations", "linear", "Löse x + 7 = 19.", 12, "x = 12", ["Du willst x allein haben.", "Ziehe auf beiden Seiten 7 ab.", "x = 12."]),
       makeStaticQuestion("statistics", "mean", "Berechne den Mittelwert von 4, 8, 10, 14.", 9, "9", ["Addiere alle Werte.", "36 geteilt durch 4 Werte.", "Der Mittelwert ist 9."]),
-      makeStaticQuestion("coordinates", "distance-axis", "Wie weit liegen A(2|0) und B(9|0) auseinander?", 7, "7", ["Beide Punkte liegen auf derselben Achse.", "Rechne 9 - 2.", "Der Abstand ist 7."]),
-      makeStaticQuestion("percent", "discount", "Ein 60 € Spiel ist 20% günstiger. Wie hoch ist der Rabatt?", 12, "12 €", ["Gesucht ist 20% von 60.", "10% sind 6, also sind 20% 12.", "Der Rabatt ist 12 €."]),
+      makeStaticQuestion("german-reading", "reading-detail", "Tom packt einen Apfel und Wasser ein. Was packt Tom zu trinken ein?", "Wasser", "Wasser", ["Lies den Satz genau.", "Suche das Getränk.", "Tom packt Wasser ein."]),
+      makeStaticQuestion("english-vocabulary", "vocabulary", "Wie heißt Hund auf Englisch?", "dog", "dog", ["Denke an ein bekanntes Tierwort.", "Hund heißt dog.", "Die richtige Antwort ist dog."]),
+      makeStaticQuestion("science-weather", "water-cycle", "Wie nennt man Wasser, das aus Wolken fällt?", "Niederschlag", "Niederschlag", ["Denke an Regen und Schnee.", "Beides fällt aus Wolken.", "Das heißt Niederschlag."]),
+      makeStaticQuestion("history-sources", "sources", "Ist ein altes Foto eher Quelle oder Himmelsrichtung?", "Quelle", "Quelle", ["Fotos können Vergangenheit zeigen.", "Solche Spuren heißen Quellen.", "Die Antwort ist Quelle."]),
+      makeStaticQuestion("geography-scale", "scale", "Auf einer Karte sind 1 cm = 2 km. Wie viel sind 4 cm?", 8, "8 km", ["Jeder Zentimeter steht für 2 km.", "Rechne 4 mal 2.", "4 cm sind 8 km."]),
+      makeStaticQuestion("cs-algorithms", "algorithms", "Was ist bei einem Algorithmus besonders wichtig: Reihenfolge oder Farbe?", "Reihenfolge", "Reihenfolge", ["Ein Algorithmus besteht aus Schritten.", "Die Schritte müssen sinnvoll geordnet sein.", "Wichtig ist die Reihenfolge."]),
     ],
   },
 ];
@@ -549,6 +794,10 @@ function subject(id, title, description, visual, color, gradeMin, gradeMax, orde
   return { id, title, description, visual, color, gradeMin, gradeMax, order };
 }
 
+function module(id, subjectId, iconKey, title, skills, gradeMin, gradeMax) {
+  return { id, subjectId, iconKey, title, skills, gradeMin, gradeMax };
+}
+
 function topic(id, subjectId, moduleId, title, gradeMin, gradeMax) {
   return { id, subjectId, moduleId, title, gradeMin, gradeMax };
 }
@@ -557,8 +806,8 @@ function template(id, subjectId, moduleId, topicId, skillId, title, answerType, 
   return { id, subjectId, moduleId, topicId, skillId, title, answerType, gradeMin, gradeMax, visual, errorType, create };
 }
 
-function task(prompt, answer, hintSteps, acceptedAnswers = []) {
-  return { prompt, answer, hintSteps, acceptedAnswers };
+function task(prompt, answer, hintSteps, acceptedAnswers = [], choices = []) {
+  return { prompt, answer, hintSteps, acceptedAnswers, choices };
 }
 
 function generateFromTemplate({ subjectId, moduleId, grade = 3, level = null, templateId = null }) {
@@ -589,6 +838,7 @@ function generateFromTemplate({ subjectId, moduleId, grade = 3, level = null, te
     prompt: generated.prompt,
     answer: generated.answer,
     acceptedAnswers: generated.acceptedAnswers ?? [],
+    choices: generated.choices ?? [],
     hint: generated.hintSteps[0],
     hintSteps: generated.hintSteps,
     explanation: generated.hintSteps[generated.hintSteps.length - 1],
@@ -600,7 +850,10 @@ function generateFromTemplate({ subjectId, moduleId, grade = 3, level = null, te
 }
 
 function placeholderForAnswerType(answerType) {
-  if (answerType === "multiple-choice") return "Antwort oder Begriff";
+  if (answerType === "multiple-choice") return "Option auswählen oder eintippen";
+  if (answerType === "ordering") return "z. B. A > B > C";
+  if (answerType === "matching") return "z. B. A-B, C-D";
+  if (answerType === "fill-blank") return "Lücke ergänzen";
   if (answerType === "unit") return "Antwort mit Einheit möglich";
   if (answerType === "text") return "Wort oder kurzer Satz";
   return "Antwort";
