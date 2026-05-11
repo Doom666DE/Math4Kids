@@ -158,6 +158,15 @@ button {
   padding: 24px;
 }
 
+.demo-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f4f8fb;
+}
+
 .auth-card label,
 .child-form label,
 .small-select {
@@ -899,7 +908,7 @@ select:focus {
 
 .filter-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
   gap: 12px;
   margin: 18px 0;
 }
@@ -955,6 +964,26 @@ select:focus {
 
 .mission-progress-list.compact .mission-progress-row:nth-child(n + 5) {
   display: none;
+}
+
+@media (max-width: 1420px) {
+  .mission-layout {
+    grid-template-columns: minmax(300px, 360px) minmax(360px, 1fr);
+  }
+
+  .mission-layout .progress-aside {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+  }
+
+  .teacher-grid {
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  }
+
+  .teacher-grid .hero-panel,
+  .teacher-grid .wide {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 1180px) {
@@ -1038,6 +1067,23 @@ select:focus {
 
   .attempt-row {
     grid-template-columns: 1fr;
+  }
+
+  .attempt-table.detailed {
+    min-width: 0;
+  }
+
+  .attempt-table.detailed .attempt-row {
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+
+  .attempt-table.detailed .attempt-row.header {
+    display: none;
+  }
+
+  .attempt-table.detailed .attempt-row:not(.header) span {
+    white-space: normal;
   }
 
   .auth-layout {

@@ -161,6 +161,8 @@ function createSupabaseStore() {
       if (filters.result === "correct") query = query.eq("is_correct", true);
       if (filters.result === "wrong") query = query.eq("is_correct", false);
       if (filters.errorType) query = query.eq("error_type", filters.errorType);
+      const since = dateRangeStart(filters.dateRange);
+      if (since) query = query.gte("created_at", since.toISOString());
       const { data, error } = await query;
       if (error) throw error;
       return (data ?? []).map((attempt) => ({ ...attempt, child: childMap.get(attempt.child_id) ?? null }));
@@ -332,8 +334,26 @@ export function createDemoStore() {
         .filter((attempt) => filters.result !== "correct" || attempt.is_correct)
         .filter((attempt) => filters.result !== "wrong" || !attempt.is_correct)
         .filter((attempt) => !filters.errorType || attempt.error_type === filters.errorType)
+        .filter((attempt) => {
+          const since = dateRangeStart(filters.dateRange);
+          return !since || new Date(attempt.created_at) >= since;
+        })
         .sort((a, b) => b.created_at.localeCompare(a.created_at))
         .map((attempt) => ({ ...attempt, child: childMap.get(attempt.child_id) ?? null }));
     },
   };
+}
+
+function dateRangeStart(dateRange) {
+  const now = new Date();
+  if (dateRange === "today") {
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+  if (dateRange === "7d") {
+    return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  }
+  if (dateRange === "30d") {
+    return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+  return null;
 }

@@ -4,10 +4,12 @@ import {
   fixedTests,
   generateQuestion,
   gradeAnswer,
+  errorTypeLabel,
   learningModules,
   missions,
   nextMissionProgress,
   starsForAttempt,
+  skillLabel,
   summarizeAttempts,
 } from "../src/modules/learningEngine.js";
 
@@ -96,4 +98,12 @@ test("summarizes attempts into accuracy and recommendations", () => {
   assert.equal(summary.accuracy, 25);
   assert.equal(summary.recommendations.some((item) => item.includes("Brüche")), true);
   assert.equal(summary.missionStats.stars, 4);
+});
+
+test("maps internal skill and error keys to German UI labels", () => {
+  assert.equal(skillLabel("mean"), "Mittelwert");
+  assert.equal(skillLabel("table-sum"), "Tabellensumme");
+  assert.equal(skillLabel("range"), "Spannweite");
+  assert.equal(errorTypeLabel("Textverstaendnis"), "Textverständnis");
+  assert.equal(errorTypeLabel("Bruchkuerzen"), "Brüche kürzen");
 });

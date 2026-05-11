@@ -27,10 +27,12 @@ import {
   generateQuestion,
   getMissionProgress,
   gradeAnswer,
+  errorTypeLabel,
   learningModules,
   missions,
   nextMissionProgress,
   starsForAttempt,
+  skillLabel,
   summarizeAttempts,
 } from "./modules/learningEngine.js";
 import { createMath4KidsStore } from "./services/store.js";
@@ -56,6 +58,7 @@ function App() {
   const [activeClass, setActiveClass] = useState(null);
   const [classChildren, setClassChildren] = useState([]);
   const [classAttempts, setClassAttempts] = useState([]);
+  const [classAttemptOptions, setClassAttemptOptions] = useState([]);
   const [view, setView] = useState("lernen");
   const [loading, setLoading] = useState(true);
 
@@ -115,15 +118,18 @@ function App() {
     setClassRooms(loadedClasses);
     setActiveClass(nextClass ?? null);
     if (nextClass) {
-      const [loadedClassChildren, loadedClassAttempts] = await Promise.all([
+      const [loadedClassChildren, loadedClassAttempts, loadedClassAttemptOptions] = await Promise.all([
         store.listClassChildren(nextClass.id),
         store.listClassAttempts(nextClass.id, filters),
+        store.listClassAttempts(nextClass.id, {}),
       ]);
       setClassChildren(loadedClassChildren);
       setClassAttempts(loadedClassAttempts);
+      setClassAttemptOptions(loadedClassAttemptOptions);
     } else {
       setClassChildren([]);
       setClassAttempts([]);
+      setClassAttemptOptions([]);
     }
   }
 
@@ -177,6 +183,7 @@ function App() {
     setActiveClass(null);
     setClassChildren([]);
     setClassAttempts([]);
+    setClassAttemptOptions([]);
   }
 
   async function handleCreateClassRoom(classRoom) {
@@ -234,6 +241,7 @@ function App() {
             activeClass={activeClass}
             classChildren={classChildren}
             classAttempts={classAttempts}
+            classAttemptOptions={classAttemptOptions}
             children={children}
             onCreateClassRoom={handleCreateClassRoom}
             onAssignChildToClass={handleAssignChildToClass}
@@ -278,6 +286,17 @@ function AuthScreen({ onSignedIn }) {
     }
   }
 
+  async function startDemo(nextRole) {
+    setError("");
+    const demoEmail = nextRole === "teacher" ? "lehrkraft@math4kids.local" : "demo@math4kids.local";
+    try {
+      const nextSession = await store.signUp({ email: demoEmail, password: "math4kids-demo", role: nextRole });
+      onSignedIn(nextSession);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
     <div className="auth-layout">
       <section className="auth-hero">
@@ -297,11 +316,23 @@ function AuthScreen({ onSignedIn }) {
           <span>Missionen</span>
           <span>Geometrie</span>
           <span>Brüche</span>
-          <span>Supabase</span>
+          <span>{store.isSupabaseEnabled ? "Supabase verbunden" : "Demo-Modus"}</span>
         </div>
       </section>
 
       <form className="auth-card" onSubmit={submit}>
+        {!store.isSupabaseEnabled && (
+          <div className="demo-actions" aria-label="Demo direkt starten">
+            <button className="primary-button" type="button" onClick={() => startDemo("parent")}>
+              <Play size={18} />
+              Demo starten
+            </button>
+            <button className="secondary-button" type="button" onClick={() => startDemo("teacher")}>
+              <School size={18} />
+              Lehrkraft-Demo starten
+            </button>
+          </div>
+        )}
         <div className="segment-control">
           <button type="button" className={mode === "signin" ? "active" : ""} onClick={() => setMode("signin")}>
             Anmelden
@@ -558,6 +589,7 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
   const [visibleHints, setVisibleHints] = useState(0);
   const [sessionStats, setSessionStats] = useState({ answered: 0, correct: 0, stars: 0 });
   const [lastProgress, setLastProgress] = useState(progress);
+  const [practiceAfterComplete, setPracticeAfterComplete] = useState(false);
   const [startedAt, setStartedAt] = useState(Date.now());
 
   useEffect(() => {
@@ -569,15 +601,18 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
     setVisibleHints(0);
     setSessionStats({ answered: 0, correct: 0, stars: 0 });
     setLastProgress(progress);
+    setPracticeAfterComplete(false);
     setStartedAt(Date.now());
   }, [activeChild.id, activeChild.grade, mission.id, mission.moduleId]);
 
   const currentProgress = lastProgress ?? progress ?? {};
   const correctCount = currentProgress.correct_count ?? 0;
   const completed = currentProgress.completed || correctCount >= mission.targetCount;
+  const showCompletion = completed && !practiceAfterComplete && !feedback;
   const progressPercent = Math.min(100, Math.round((correctCount / mission.targetCount) * 100));
 
   function nextQuestion(nextLevel = level) {
+    if (completed) setPracticeAfterComplete(true);
     setQuestion(generateQuestion({ moduleId: mission.moduleId, missionId: mission.id, grade: activeChild.grade, level: nextLevel }));
     setAnswer("");
     setFeedback(null);
@@ -585,9 +620,8 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
     setStartedAt(Date.now());
   }
 
-  async function submit(event) {
-    event.preventDefault();
-    if (feedback) return;
+  async function submitAnswer() {
+    if (feedback || !answer.trim()) return;
     const result = gradeAnswer(question, answer);
     const starsAwarded = starsForAttempt({ correct: result.correct, hintCount: visibleHints });
     const progressUpdate = nextMissionProgress(currentProgress, {
@@ -623,6 +657,11 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
     setLastProgress(savedProgress ?? progressUpdate);
   }
 
+  function submit(event) {
+    event.preventDefault();
+    submitAnswer();
+  }
+
   return (
     <section className="practice-panel mission-player">
       <div className="panel-head">
@@ -645,11 +684,12 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
       </div>
       <div className="progress-track large"><span style={{ width: `${progressPercent}%` }} /></div>
 
-      {completed ? (
+      {showCompletion ? (
         <div className="mission-complete">
           <Trophy size={42} />
           <h3>Mission abgeschlossen</h3>
           <p>Das kannst du schon: {mission.description}</p>
+          <p>Als Nächstes kannst du die Mission freiwillig wiederholen oder eine neue Mathe-Welt auswählen.</p>
           <button className="primary-button" type="button" onClick={nextQuestion}>
             <Play size={18} />
             Weiter trainieren
@@ -664,7 +704,7 @@ function MissionPlayer({ activeChild, mission, progress, onAttempt }) {
               Deine Antwort
               <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
             </label>
-            <button className="primary-button" type="submit">
+            <button className="primary-button" type="button" onClick={submitAnswer} disabled={!answer.trim()}>
               <CheckCircle2 size={18} />
               Prüfen
             </button>
@@ -750,8 +790,8 @@ function TestRunner({ activeChild, test, onAttempt }) {
     setResults([]);
   }, [test.id]);
 
-  async function submit(event) {
-    event.preventDefault();
+  async function saveAnswer() {
+    if (!answer.trim()) return;
     const result = gradeAnswer(question, answer);
     const attempt = {
       module_id: question.moduleId,
@@ -779,6 +819,11 @@ function TestRunner({ activeChild, test, onAttempt }) {
     }
   }
 
+  function submit(event) {
+    event.preventDefault();
+    saveAnswer();
+  }
+
   if (!activeChild) {
     return <EmptyState title="Kein Profil ausgewählt" text="Wähle ein Kind aus, um Tests zu starten." />;
   }
@@ -802,7 +847,7 @@ function TestRunner({ activeChild, test, onAttempt }) {
             Antwort
             <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder={question.placeholder} />
           </label>
-          <button className="primary-button" type="submit">Antwort speichern</button>
+          <button className="primary-button" type="button" onClick={saveAnswer} disabled={!answer.trim()}>Antwort speichern</button>
         </form>
       )}
     </section>
@@ -836,8 +881,8 @@ function ChildrenView({ children, activeChild, onCreateChild, onSelectChild }) {
   );
 }
 
-function ClassesView({ classRooms, activeClass, classChildren, classAttempts, children, onCreateClassRoom, onAssignChildToClass, onSelectClass }) {
-  const [filters, setFilters] = useState({ childId: "", moduleId: "", result: "", errorType: "" });
+function ClassesView({ classRooms, activeClass, classChildren, classAttempts, classAttemptOptions, children, onCreateClassRoom, onAssignChildToClass, onSelectClass }) {
+  const [filters, setFilters] = useState({ childId: "", moduleId: "", result: "", errorType: "", dateRange: "" });
   const [childToAssign, setChildToAssign] = useState("");
   const classSummary = summarizeAttempts(classAttempts);
   const assignableChildren = children.filter((child) => !classChildren.some((classChild) => classChild.id === child.id));
@@ -928,7 +973,7 @@ function ClassesView({ classRooms, activeClass, classChildren, classAttempts, ch
             <h2>Alle Eingaben der Klasse</h2>
           </div>
         </div>
-        <ClassAttemptFilters filters={filters} children={classChildren} attempts={classAttempts} onChange={updateFilters} />
+        <ClassAttemptFilters filters={filters} children={classChildren} attempts={classAttemptOptions} onChange={updateFilters} />
         <AttemptTable attempts={classAttempts} detailed showChild />
       </div>
     </section>
@@ -1009,7 +1054,16 @@ function ClassAttemptFilters({ filters, children, attempts, onChange }) {
         Fehlerart
         <select value={filters.errorType} onChange={(event) => next("errorType", event.target.value)}>
           <option value="">Alle</option>
-          {errorTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+          {errorTypes.map((type) => <option key={type} value={type}>{errorTypeLabel(type)}</option>)}
+        </select>
+      </label>
+      <label>
+        Zeitraum
+        <select value={filters.dateRange} onChange={(event) => next("dateRange", event.target.value)}>
+          <option value="">Alles</option>
+          <option value="today">Heute</option>
+          <option value="7d">Letzte 7 Tage</option>
+          <option value="30d">Letzte 30 Tage</option>
         </select>
       </label>
     </div>
@@ -1099,7 +1153,7 @@ function ErrorTypeList({ summary }) {
   }
   return (
     <ul className="recommendation-list">
-      {summary.topErrorTypes.map(([type, count]) => <li key={type}><HelpCircle size={16} />{type}: {count}</li>)}
+      {summary.topErrorTypes.map(([type, count]) => <li key={type}><HelpCircle size={16} />{errorTypeLabel(type)}: {count}</li>)}
     </ul>
   );
 }
@@ -1162,7 +1216,7 @@ function AttemptTable({ attempts, compact = false, detailed = false, showChild =
                 <span>{attempt.expected_answer}</span>
                 <span>{attempt.hint_count ?? 0}</span>
                 <span>{formatDuration(attempt.duration_ms)}</span>
-                <span>{attempt.error_type || "ok"}</span>
+                <span>{attempt.error_type ? errorTypeLabel(attempt.error_type) : "keine"}</span>
                 <span>{formatDateTime(attempt.created_at)}</span>
                 <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "falsch"}</strong>
               </>
@@ -1170,7 +1224,7 @@ function AttemptTable({ attempts, compact = false, detailed = false, showChild =
               <>
                 <span>{moduleTitle(attempt.module_id)}</span>
                 {!compact && <span>{attempt.prompt}</span>}
-                {!compact && <span>{attempt.error_type || "ok"}</span>}
+                {!compact && <span>{attempt.error_type ? errorTypeLabel(attempt.error_type) : "keine"}</span>}
                 <strong className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "üben"}</strong>
               </>
             )}
@@ -1200,12 +1254,12 @@ function AttemptDetailDialog({ attempt, onClose }) {
           <div><dt>Richtige Lösung</dt><dd>{attempt.expected_answer}</dd></div>
           <div><dt>Ergebnis</dt><dd className={attempt.is_correct ? "ok" : "bad"}>{attempt.is_correct ? "richtig" : "falsch"}</dd></div>
           <div><dt>Mission</dt><dd>{missionTitle(attempt.mission_id)}</dd></div>
-          <div><dt>Modul / Skill</dt><dd>{moduleTitle(attempt.module_id)} · {attempt.skill_id}</dd></div>
+          <div><dt>Modul / Kompetenz</dt><dd>{moduleTitle(attempt.module_id)} · {skillLabel(attempt.skill_id)}</dd></div>
           <div><dt>Level</dt><dd>{attempt.level ?? attempt.grade_level ?? "-"}</dd></div>
           <div><dt>Hilfen</dt><dd>{attempt.hint_count ?? 0}</dd></div>
           <div><dt>Sterne</dt><dd>{attempt.stars_awarded ?? 0}</dd></div>
           <div><dt>Dauer</dt><dd>{formatDuration(attempt.duration_ms)}</dd></div>
-          <div><dt>Fehlerart</dt><dd>{attempt.error_type || "keine"}</dd></div>
+          <div><dt>Fehlerart</dt><dd>{attempt.error_type ? errorTypeLabel(attempt.error_type) : "keine"}</dd></div>
           <div><dt>Zeitpunkt</dt><dd>{formatDateTime(attempt.created_at)}</dd></div>
           <div className="full"><dt>Erklärung</dt><dd>{attempt.explanation || "Keine Erklärung gespeichert."}</dd></div>
         </dl>

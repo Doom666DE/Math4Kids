@@ -388,14 +388,14 @@ on conflict (id) do update set
 
 insert into public.missions (id, module_id, title, description, badge, visual, grade_min, grade_max, target_count, sort_order) values
   ('zahlenwelt', 'arithmetic', 'Zahlenwelt', 'Schnell und sicher mit Plus, Minus, Mal und Geteilt.', 'Zahlen-Profi', '4', 1, 6, 6, 1),
-  ('bruch-pizza', 'fractions', 'Bruch-Pizza', 'Teile erkennen, vergleichen und Bruchteile berechnen.', 'Bruch-Baecker', '1/2', 3, 8, 6, 2),
+  ('bruch-pizza', 'fractions', 'Bruch-Pizza', 'Teile erkennen, vergleichen und Bruchteile berechnen.', 'Bruch-Bäcker', '1/2', 3, 8, 6, 2),
   ('komma-werkstatt', 'decimals', 'Komma-Werkstatt', 'Dezimalzahlen lesen, runden und zusammenrechnen.', 'Komma-Meister', '0,5', 4, 8, 6, 3),
   ('prozent-shop', 'percent', 'Prozent-Shop', 'Rabatte, Prozentwerte und Grundwerte im Alltag.', 'Rabatt-Profi', '%', 5, 10, 6, 4),
-  ('geometrie-labor', 'geometry', 'Geometrie-Labor', 'Formen, Umfang, Flaeche, Winkel und Koerper.', 'Formen-Forscher', '▭', 2, 10, 6, 5),
-  ('einheiten-reise', 'measures', 'Einheiten-Reise', 'Laengen, Zeiten, Geld, Gewicht und Volumen umwandeln.', 'Einheiten-Pilot', 'm', 2, 8, 6, 6),
-  ('detektiv-texte', 'word-problems', 'Textaufgaben-Detektiv', 'Wichtige Informationen finden und den Rechenweg waehlen.', 'Text-Detektiv', '?', 2, 8, 6, 7),
-  ('gleichungs-dojo', 'equations', 'Gleichungs-Dojo', 'Platzhalter und einfache Gleichungen sauber loesen.', 'Gleichungs-Ninja', 'x', 5, 10, 6, 8),
-  ('koordinaten-karte', 'coordinates', 'Koordinaten-Karte', 'Punkte lesen, Wege finden und Abstaende bestimmen.', 'Karten-Profi', '(x|y)', 5, 10, 6, 9),
+  ('geometrie-labor', 'geometry', 'Geometrie-Labor', 'Formen, Umfang, Fläche, Winkel und Körper.', 'Formen-Forscher', '▭', 2, 10, 6, 5),
+  ('einheiten-reise', 'measures', 'Einheiten-Reise', 'Längen, Zeiten, Geld, Gewicht und Volumen umwandeln.', 'Einheiten-Pilot', 'm', 2, 8, 6, 6),
+  ('detektiv-texte', 'word-problems', 'Textaufgaben-Detektiv', 'Wichtige Informationen finden und den Rechenweg wählen.', 'Text-Detektiv', '?', 2, 8, 6, 7),
+  ('gleichungs-dojo', 'equations', 'Gleichungs-Dojo', 'Platzhalter und einfache Gleichungen sauber lösen.', 'Gleichungs-Ninja', 'x', 5, 10, 6, 8),
+  ('koordinaten-karte', 'coordinates', 'Koordinaten-Karte', 'Punkte lesen, Wege finden und Abstände bestimmen.', 'Karten-Profi', '(x|y)', 5, 10, 6, 9),
   ('statistik-studio', 'statistics', 'Statistik-Studio', 'Tabellen, Diagramme und Mittelwerte verstehen.', 'Daten-Profi', '▥', 4, 10, 6, 10)
 on conflict (id) do update set
   module_id = excluded.module_id,

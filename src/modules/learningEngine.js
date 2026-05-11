@@ -63,16 +63,90 @@ export const learningModules = [
 
 export const missions = [
   mission("zahlenwelt", "arithmetic", "Zahlenwelt", "Schnell und sicher mit Plus, Minus, Mal und Geteilt.", "Zahlen-Profi", "4", 1, 6, 1),
-  mission("bruch-pizza", "fractions", "Bruch-Pizza", "Teile erkennen, vergleichen und Bruchteile berechnen.", "Bruch-Baecker", "1/2", 3, 8, 2),
+  mission("bruch-pizza", "fractions", "Bruch-Pizza", "Teile erkennen, vergleichen und Bruchteile berechnen.", "Bruch-Bäcker", "1/2", 3, 8, 2),
   mission("komma-werkstatt", "decimals", "Komma-Werkstatt", "Dezimalzahlen lesen, runden und zusammenrechnen.", "Komma-Meister", "0,5", 4, 8, 3),
   mission("prozent-shop", "percent", "Prozent-Shop", "Rabatte, Prozentwerte und Grundwerte im Alltag.", "Rabatt-Profi", "%", 5, 10, 4),
-  mission("geometrie-labor", "geometry", "Geometrie-Labor", "Formen, Umfang, Flaeche, Winkel und Koerper.", "Formen-Forscher", "▭", 2, 10, 5),
-  mission("einheiten-reise", "measures", "Einheiten-Reise", "Laengen, Zeiten, Geld, Gewicht und Volumen umwandeln.", "Einheiten-Pilot", "m", 2, 8, 6),
-  mission("detektiv-texte", "word-problems", "Textaufgaben-Detektiv", "Wichtige Informationen finden und den Rechenweg waehlen.", "Text-Detektiv", "?", 2, 8, 7),
-  mission("gleichungs-dojo", "equations", "Gleichungs-Dojo", "Platzhalter und einfache Gleichungen sauber loesen.", "Gleichungs-Ninja", "x", 5, 10, 8),
-  mission("koordinaten-karte", "coordinates", "Koordinaten-Karte", "Punkte lesen, Wege finden und Abstaende bestimmen.", "Karten-Profi", "(x|y)", 5, 10, 9),
+  mission("geometrie-labor", "geometry", "Geometrie-Labor", "Formen, Umfang, Fläche, Winkel und Körper.", "Formen-Forscher", "▭", 2, 10, 5),
+  mission("einheiten-reise", "measures", "Einheiten-Reise", "Längen, Zeiten, Geld, Gewicht und Volumen umwandeln.", "Einheiten-Pilot", "m", 2, 8, 6),
+  mission("detektiv-texte", "word-problems", "Textaufgaben-Detektiv", "Wichtige Informationen finden und den Rechenweg wählen.", "Text-Detektiv", "?", 2, 8, 7),
+  mission("gleichungs-dojo", "equations", "Gleichungs-Dojo", "Platzhalter und einfache Gleichungen sauber lösen.", "Gleichungs-Ninja", "x", 5, 10, 8),
+  mission("koordinaten-karte", "coordinates", "Koordinaten-Karte", "Punkte lesen, Wege finden und Abstände bestimmen.", "Karten-Profi", "(x|y)", 5, 10, 9),
   mission("statistik-studio", "statistics", "Statistik-Studio", "Tabellen, Diagramme und Mittelwerte verstehen.", "Daten-Profi", "▥", 4, 10, 10),
 ];
+
+export const skillLabels = {
+  addition: "Addition",
+  subtraction: "Subtraktion",
+  multiplication: "Multiplikation",
+  division: "Division",
+  "fraction-of": "Bruchteil berechnen",
+  compare: "Brüche vergleichen",
+  simplify: "Brüche kürzen",
+  "decimal-add": "Dezimalzahlen addieren",
+  "decimal-place": "Stellenwert erkennen",
+  "decimal-round": "Dezimalzahlen runden",
+  "percent-value": "Prozentwert berechnen",
+  discount: "Rabatt berechnen",
+  "basic-percent": "Prozent als Bruch",
+  perimeter: "Umfang berechnen",
+  area: "Fläche berechnen",
+  "shape-sides": "Formen erkennen",
+  "angle-type": "Winkel bestimmen",
+  time: "Zeit umwandeln",
+  money: "Geld umwandeln",
+  weight: "Gewicht umwandeln",
+  volume: "Volumen umwandeln",
+  length: "Länge umwandeln",
+  model: "Rechenmodell finden",
+  "addition-story": "Plus-Textaufgabe",
+  "subtraction-story": "Minus-Textaufgabe",
+  "multiplication-story": "Mal-Textaufgabe",
+  linear: "Lineare Gleichung",
+  "missing-factor": "Platzhalter finden",
+  "read-point": "Koordinaten lesen",
+  "distance-axis": "Abstand auf Achse",
+  "table-sum": "Tabellensumme",
+  range: "Spannweite",
+  mean: "Mittelwert",
+};
+
+export const errorTypeLabels = {
+  ok: "keine",
+  Rechenfehler: "Rechenfehler",
+  Bruchvergleich: "Bruchvergleich",
+  Bruchkuerzen: "Brüche kürzen",
+  Stellenwert: "Stellenwert",
+  Formelwahl: "Formelwahl",
+  Formen: "Formen erkennen",
+  Winkel: "Winkel",
+  Einheiten: "Einheitenfehler",
+  Textverstaendnis: "Textverständnis",
+  Umformen: "Umformen",
+  Vorzeichen: "Vorzeichen",
+  Koordinaten: "Koordinaten",
+  Diagrammlesen: "Diagramm lesen",
+  Mittelwert: "Mittelwert",
+  addition: "Addition",
+  time: "Zeit umwandeln",
+  perimeter: "Umfang berechnen",
+  model: "Textverständnis",
+  "fraction-of": "Bruchteil berechnen",
+  "percent-value": "Prozentwert berechnen",
+  "decimal-add": "Dezimalzahlen addieren",
+  area: "Fläche berechnen",
+  linear: "Lineare Gleichung",
+  mean: "Mittelwert",
+  "distance-axis": "Abstand auf Achse",
+  discount: "Rabatt berechnen",
+};
+
+export function skillLabel(skillId) {
+  return skillLabels[skillId] ?? skillId ?? "-";
+}
+
+export function errorTypeLabel(errorType) {
+  return errorTypeLabels[errorType] ?? skillLabel(errorType) ?? errorType ?? "keine";
+}
 
 export const fixedTests = [
   {
@@ -94,7 +168,7 @@ export const fixedTests = [
       makeStaticQuestion("fractions", "fraction-of", "Wie viel ist 3/4 von 20?", 15, "15", ["Teile 20 zuerst in 4 gleiche Teile.", "20 : 4 = 5, davon nimmst du 3 Teile.", "3 mal 5 = 15."]),
       makeStaticQuestion("percent", "percent-value", "Wie viel sind 25% von 80?", 20, "20", ["25% ist ein Viertel.", "Teile 80 durch 4.", "25% von 80 sind 20."]),
       makeStaticQuestion("decimals", "decimal-add", "Berechne 3,5 + 2,75.", 6.25, "6,25", ["Schreibe die Kommas untereinander.", "3,50 + 2,75 rechnen.", "Das Ergebnis ist 6,25."]),
-      makeStaticQuestion("geometry", "area", "Ein Rechteck ist 8 cm lang und 5 cm breit. Wie groß ist die Fläche?", 40, "40 cm²", ["Flaeche Rechteck = Laenge mal Breite.", "Rechne 8 mal 5.", "Die Flaeche ist 40 cm²."]),
+      makeStaticQuestion("geometry", "area", "Ein Rechteck ist 8 cm lang und 5 cm breit. Wie groß ist die Fläche?", 40, "40 cm²", ["Fläche Rechteck = Länge mal Breite.", "Rechne 8 mal 5.", "Die Fläche ist 40 cm²."]),
     ],
   },
   {
@@ -251,7 +325,7 @@ function arithmeticQuestion(grade) {
     const top = Math.max(a, b);
     const bottom = Math.min(a, b);
     return question("arithmetic", "subtraction", "Subtrahiere die Zahlen.", `${top} - ${bottom} = ?`, top - bottom, [
-      "Starte bei der kleineren Zahl und zaehle hoch.",
+      "Starte bei der kleineren Zahl und zähle hoch.",
       `Oder rechne ${top} minus ${bottom} schrittweise.`,
       `${top} - ${bottom} = ${top - bottom}.`,
     ], "Rechenfehler");
@@ -281,21 +355,21 @@ function fractionsQuestion(grade) {
     const left = randomInt(1, denominator - 1);
     const right = randomInt(1, denominator - 1);
     const answer = left === right ? "=" : left > right ? ">" : "<";
-    return question("fractions", "compare", "Vergleiche Brueche.", `${left}/${denominator} __ ${right}/${denominator}. Welches Zeichen passt: <, > oder = ?`, answer, [
-      "Die Nenner sind gleich, also vergleichst du die Zaehler.",
-      `${left} und ${right} entscheiden ueber die Groesse.`,
+    return question("fractions", "compare", "Vergleiche Brüche.", `${left}/${denominator} __ ${right}/${denominator}. Welches Zeichen passt: <, > oder = ?`, answer, [
+      "Die Nenner sind gleich, also vergleichst du die Zähler.",
+      `${left} und ${right} entscheiden über die Größe.`,
       `${left}/${denominator} ${answer} ${right}/${denominator}.`,
-    ], "Bruchvergleich", [answer === ">" ? "groesser" : answer === "<" ? "kleiner" : "gleich"], "1/2");
+    ], "Bruchvergleich", [answer === ">" ? "größer" : answer === "<" ? "kleiner" : "gleich"], "1/2");
   }
   if (kind === "simplify") {
     const factor = randomPick([2, 3, 4, 5]);
     const numerator = randomInt(1, 5) * factor;
     const denominator = randomInt(numerator / factor + 1, 9) * factor;
     const answer = `${numerator / factor}/${denominator / factor}`;
-    return question("fractions", "simplify", "Kuerze den Bruch.", `Kuerze ${numerator}/${denominator} mit ${factor}.`, answer, [
-      "Beim Kuerzen teilst du Zaehler und Nenner durch dieselbe Zahl.",
+    return question("fractions", "simplify", "Kürze den Bruch.", `Kürze ${numerator}/${denominator} mit ${factor}.`, answer, [
+      "Beim Kürzen teilst du Zähler und Nenner durch dieselbe Zahl.",
       `${numerator} : ${factor} = ${numerator / factor} und ${denominator} : ${factor} = ${denominator / factor}.`,
-      `Gekuerzt ist das ${answer}.`,
+      `Gekürzt ist das ${answer}.`,
     ], "Bruchkuerzen", [answer.replace("/", " / ")], "1/2");
   }
   const denominator = randomPick([2, 3, 4, 5, 8, 10]);
@@ -350,7 +424,7 @@ function percentQuestion() {
     return question("percent", "discount", "Berechne den Rabatt.", `Ein Artikel kostet ${base} €. Es gibt ${percent}% Rabatt. Wie viele Euro werden abgezogen?`, value, [
       `Gesucht ist ${percent}% von ${base}.`,
       `Rechne ${base} mal ${percent} geteilt durch 100.`,
-      `Der Rabatt betraegt ${value} €.`,
+      `Der Rabatt beträgt ${value} €.`,
     ], "Prozentwert", [`${value} €`, `${value} euro`], "%");
   }
   if (kind === "basic-percent") {
@@ -373,11 +447,11 @@ function geometryQuestion(grade) {
     const sides = randomPick([
       ["Dreieck", 3],
       ["Viereck", 4],
-      ["Fuenfeck", 5],
+      ["Fünfeck", 5],
       ["Sechseck", 6],
     ]);
     return question("geometry", "shape-sides", "Erkenne Formen.", `Wie viele Seiten hat ein ${sides[0]}?`, sides[1], [
-      "Zaehle die geraden Randlinien der Form.",
+      "Zähle die geraden Randlinien der Form.",
       `Der Name ${sides[0]} gibt oft einen Hinweis.`,
       `Ein ${sides[0]} hat ${sides[1]} Seiten.`,
     ], "Formen", [], "△");
@@ -387,17 +461,17 @@ function geometryQuestion(grade) {
     const answer = angle < 90 ? "spitz" : angle === 90 ? "recht" : "stumpf";
     return question("geometry", "angle-type", "Bestimme Winkel.", `Ein Winkel ist ${angle}°. Ist er spitz, recht oder stumpf?`, answer, [
       "Ein rechter Winkel hat genau 90°.",
-      "Kleiner als 90° ist spitz, groesser als 90° ist stumpf.",
+      "Kleiner als 90° ist spitz, größer als 90° ist stumpf.",
       `${angle}° ist ${answer}.`,
     ], "Winkel", [answer === "recht" ? "rechter" : answer], "∠");
   }
   const length = randomInt(4, grade <= 4 ? 12 : 18);
   const width = randomInt(2, grade <= 4 ? 9 : 14);
   if (kind === "area") {
-    return question("geometry", "area", "Geometrie: Flaeche", `Ein Rechteck ist ${length} cm lang und ${width} cm breit. Berechne die Flaeche.`, length * width, [
-      "Flaeche Rechteck = Laenge mal Breite.",
+    return question("geometry", "area", "Geometrie: Fläche", `Ein Rechteck ist ${length} cm lang und ${width} cm breit. Berechne die Fläche.`, length * width, [
+      "Fläche Rechteck = Länge mal Breite.",
       `Rechne ${length} mal ${width}.`,
-      `Die Flaeche ist ${length * width} cm².`,
+      `Die Fläche ist ${length * width} cm².`,
     ], "Formelwahl", [`${length * width} cm²`, `${length * width} cm2`], "▭");
   }
   const answer = 2 * length + 2 * width;
@@ -443,7 +517,7 @@ function measuresQuestion(grade) {
     ], "Einheiten", [`${liters * 1000} ml`], "l");
   }
   const meters = randomInt(2, 20);
-  return question("measures", "length", "Wandle Laenge um.", `Wie viele Zentimeter sind ${meters} Meter?`, meters * 100, [
+  return question("measures", "length", "Wandle Länge um.", `Wie viele Zentimeter sind ${meters} Meter?`, meters * 100, [
     "Ein Meter hat 100 Zentimeter.",
     `Rechne ${meters} mal 100.`,
     `${meters} m sind ${meters * 100} cm.`,
@@ -464,10 +538,10 @@ function wordProblemQuestion() {
   if (kind === "multiplication-story") {
     const boxes = randomInt(3, 9);
     const perBox = randomInt(4, 12);
-    return question("word-problems", "multiplication-story", "Textaufgabe", `In ${boxes} Kisten liegen jeweils ${perBox} Baelle. Wie viele Baelle sind es insgesamt?`, boxes * perBox, [
+    return question("word-problems", "multiplication-story", "Textaufgabe", `In ${boxes} Kisten liegen jeweils ${perBox} Bälle. Wie viele Bälle sind es insgesamt?`, boxes * perBox, [
       "Jeweils ist ein Hinweis auf Malrechnen.",
       `Rechne ${boxes} mal ${perBox}.`,
-      `Insgesamt sind es ${boxes * perBox} Baelle.`,
+      `Insgesamt sind es ${boxes * perBox} Bälle.`,
     ], "Textverstaendnis", [], "?");
   }
   const start = randomInt(12, 80);
@@ -484,7 +558,7 @@ function equationsQuestion() {
   if (kind === "linear-subtract") {
     const x = randomInt(8, 30);
     const sub = randomInt(2, 10);
-    return question("equations", "linear", "Loese die Gleichung.", `x - ${sub} = ${x - sub}. Wie groß ist x?`, x, [
+    return question("equations", "linear", "Löse die Gleichung.", `x - ${sub} = ${x - sub}. Wie groß ist x?`, x, [
       "Du willst x allein haben.",
       `Addiere ${sub} auf beiden Seiten.`,
       `x = ${x}.`,
@@ -493,15 +567,15 @@ function equationsQuestion() {
   if (kind === "missing-factor") {
     const x = randomInt(2, 12);
     const factor = randomInt(2, 10);
-    return question("equations", "missing-factor", "Finde den Platzhalter.", `□ × ${factor} = ${x * factor}. Welche Zahl gehoert in das Feld?`, x, [
+    return question("equations", "missing-factor", "Finde den Platzhalter.", `□ × ${factor} = ${x * factor}. Welche Zahl gehört in das Feld?`, x, [
       "Suche die passende Geteiltaufgabe.",
       `Rechne ${x * factor} geteilt durch ${factor}.`,
-      `In das Feld gehoert ${x}.`,
+      `In das Feld gehört ${x}.`,
     ], "Umformen", [], "x");
   }
   const x = randomInt(3, 25);
   const add = randomInt(2, 15);
-  return question("equations", "linear", "Loese die Gleichung.", `x + ${add} = ${x + add}. Wie groß ist x?`, x, [
+  return question("equations", "linear", "Löse die Gleichung.", `x + ${add} = ${x + add}. Wie groß ist x?`, x, [
     "Du willst x allein haben.",
     `Ziehe ${add} auf beiden Seiten ab.`,
     `x = ${x}.`,
@@ -542,8 +616,8 @@ function statisticsQuestion() {
   if (kind === "range") {
     const min = Math.min(...values);
     const max = Math.max(...values);
-    return question("statistics", "range", "Bestimme die Spannweite.", `Die Werte sind ${values.join(", ")}. Wie groß ist der Unterschied zwischen groesstem und kleinstem Wert?`, max - min, [
-      "Suche den kleinsten und den groessten Wert.",
+    return question("statistics", "range", "Bestimme die Spannweite.", `Die Werte sind ${values.join(", ")}. Wie groß ist der Unterschied zwischen größtem und kleinstem Wert?`, max - min, [
+      "Suche den kleinsten und den größten Wert.",
       `Rechne ${max} - ${min}.`,
       `Die Spannweite ist ${max - min}.`,
     ], "Diagrammlesen", [], "▥");
@@ -599,10 +673,10 @@ function makeStaticQuestion(moduleId, skillId, prompt, answer, accepted, hintSte
 function buildRecommendations(weak, byError, nextMission) {
   const items = weak.map((item) => `${titleFor(item.moduleId)} wiederholen (${item.accuracy}% richtig)`);
   for (const [errorType, count] of Array.from(byError.entries()).sort((a, b) => b[1] - a[1]).slice(0, 2)) {
-    items.push(`${errorType} gezielt ueben (${count} Fehler)`);
+    items.push(`${errorTypeLabel(errorType)} gezielt üben (${count} Fehler)`);
   }
   if (nextMission) {
-    items.unshift(`Naechste Mission: ${nextMission.title}`);
+    items.unshift(`Nächste Mission: ${nextMission.title}`);
   }
   return [...new Set(items)].slice(0, 5);
 }
